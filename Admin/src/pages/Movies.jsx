@@ -1,34 +1,72 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import MovieCard from '../components/MovieCard';
+import { toast } from 'react-toastify';
 
 const Movies = () => {
   const [movies, setMovies] = useState([]);
+  const [savedMovies, setSavedMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
 
+  // Fetch popular movies from TMDB
   useEffect(() => {
-    const fetchMovies = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(
-          `https://api.themoviedb.org/3/movie/popular?api_key=${
-            import.meta.env.VITE_TMDB_API_KEY
-          }&language=en-US&page=${page}`
-        );
-        setMovies(res.data.results);
+        const [popularRes, savedRes] = await Promise.all([
+          axios.get(
+            `https://api.themoviedb.org/3/movie/popular?api_key=${
+              import.meta.env.VITE_TMDB_API_KEY
+            }&language=en-US&page=${page}`
+          ),
+          axios.get('http://localhost:5000/api/movies') // Fetch saved movies
+        ]);
+
+        setMovies(popularRes.data.results);
+        setSavedMovies(savedRes.data);
       } catch (err) {
-        console.error('Error fetching movies:', err);
+        console.log(err);
+        toast.error('Error fetching data');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchMovies();
+    fetchData();
   }, [page]);
 
+  // Add movie to database
+  const handleAddMovie = async (movie) => {
+    try {
+      await axios.post('http://localhost:5000/api/movies', movie);
+      setSavedMovies(prev => [...prev, movie]);
+      toast.success(`${movie.title} added successfully!`);
+    } catch (err) {
+        console.log(err);
+      toast.error('Failed to add movie');
+    }
+  };
+
+  // Delete movie from database
+  const handleDeleteMovie = async (movieId) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/movies/${movieId}`);
+      setSavedMovies(prev => prev.filter(m => m.id !== movieId));
+      toast.success('Movie removed successfully!');
+    } catch (err) {
+         console.log(err);
+      toast.error('Failed to remove movie');
+    }
+  };
+
+  // Check if movie is already saved
+  const isMovieSaved = (movieId) => {
+    return savedMovies.some(m => m.id === movieId);
+  };
+
   return (
-    <div>
+    <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Popular Movies</h1>
       
       {loading ? (
@@ -39,13 +77,19 @@ const Movies = () => {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {movies.map((movie) => (
-              <MovieCard key={movie.id} movie={movie} />
+              <MovieCard
+                key={movie.id}
+                movie={movie}
+                onAdd={handleAddMovie}
+                onDelete={handleDeleteMovie}
+                isAdded={isMovieSaved(movie.id)}
+              />
             ))}
           </div>
           
           <div className="flex justify-center mt-8 space-x-2">
             <button
-              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              onClick={() => setPage(prev => Math.max(prev - 1, 1))}
               disabled={page === 1}
               className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50"
             >
@@ -55,7 +99,7 @@ const Movies = () => {
               {page}
             </span>
             <button
-              onClick={() => setPage((prev) => prev + 1)}
+              onClick={() => setPage(prev => prev + 1)}
               className="px-4 py-2 bg-gray-200 rounded-md"
             >
               Next

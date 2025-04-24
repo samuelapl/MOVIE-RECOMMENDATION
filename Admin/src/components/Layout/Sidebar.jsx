@@ -2,7 +2,8 @@ import { NavLink } from 'react-router-dom';
 
 const Sidebar = () => {
   const navItems = [
-    { name: 'Movies', path: 'movies' },
+    { name: 'All Movies', path: 'movies' },
+    { name: 'Saved Movies', path: 'saved-movies' },
     { name: 'Categories', path: 'categories' },
     { name: 'Users', path: 'users' },
     { name: 'Settings', path: 'settings' },

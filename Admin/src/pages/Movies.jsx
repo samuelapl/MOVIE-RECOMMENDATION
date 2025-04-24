@@ -14,28 +14,46 @@ const Movies = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
+  
+        // 1. Fetch both popular and saved movies in parallel
         const [popularRes, savedRes] = await Promise.all([
           axios.get(
             `https://api.themoviedb.org/3/movie/popular?api_key=${
               import.meta.env.VITE_TMDB_API_KEY
             }&language=en-US&page=${page}`
           ),
-          axios.get('http://localhost:5000/api/movies') // Fetch saved movies
+          axios.get('http://localhost:5000/api/movies')
         ]);
-
-        setMovies(popularRes.data.results);
+  
+        // 2. Fetch detailed info for each popular movie
+        const detailedMovies = await Promise.all(
+          popularRes.data.results.map(async (movie) => {
+            try {
+              const detailRes = await axios.get(
+                `https://api.themoviedb.org/3/movie/${movie.id}?api_key=${
+                  import.meta.env.VITE_TMDB_API_KEY
+                }`
+              );
+              return detailRes.data; // Returns movie with runtime, genres, etc.
+            } catch (err) {
+              console.error(`Failed to fetch details for movie ${movie.id}:`, err);
+              return movie; // Fallback to basic data if details fail
+            }
+          })
+        );
+  
+        setMovies(detailedMovies);
         setSavedMovies(savedRes.data);
       } catch (err) {
-        console.log(err);
-        toast.error('Error fetching data');
+        console.error('Error fetching data:', err);
+        toast.error('Failed to load movies');
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchData();
   }, [page]);
-
   // Add movie to database
   const handleAddMovie = async (movie) => {
     try {

@@ -1,5 +1,5 @@
-import User from '../models/User';
-import logger from '../utils/logger';
+import User from '../models/User.js';
+
 
 // @desc    Get all users
 // @route   GET /api/users
@@ -14,8 +14,8 @@ export const getUsers = async (req, res, next) => {
       data: users,
     });
   } catch (err) {
-    logger.error('Get users error:', err);
-    next(err);
+    console.log(err)
+  
   }
 };
 
@@ -38,8 +38,7 @@ export const getUser = async (req, res, next) => {
       data: user,
     });
   } catch (err) {
-    logger.error('Get user error:', err);
-    next(err);
+   console.log(err)
   }
 };
 
@@ -65,8 +64,7 @@ export const updateUser = async (req, res, next) => {
       data: user,
     });
   } catch (err) {
-    logger.error('Update user error:', err);
-    next(err);
+    console.log(err)
   }
 };
 
@@ -89,7 +87,6 @@ export const deleteUser = async (req, res, next) => {
       data: {},
     });
   } catch (err) {
-    logger.error('Delete user error:', err);
-    next(err);
+  console.log(err)
   }
 };

@@ -6,6 +6,7 @@ import WhatYouGetSteps from './components/WhatYouGetSteps';
 import LoginPage from './components/LoginPage';
 import SignupPage from './components/SignupPage';
 import Layout from './components/Layout/Layout';
+import UserDashboard from './components/UserPage/UserDashboard';
 
 
 const App = () => {
@@ -26,6 +27,9 @@ const App = () => {
         {/* Auth routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/user-page" element={<UserDashboard />} />
+
+        
       </Routes>
       
     </Router>

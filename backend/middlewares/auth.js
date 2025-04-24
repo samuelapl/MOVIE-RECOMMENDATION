@@ -1,7 +1,7 @@
 import  jwt from 'jsonwebtoken';
-import  User from '../models/User';
-import  { JWT_SECRET } from '../config/constants';
-import  logger from '../utils/logger';
+import  User from '../models/User.js';
+import  { JWT_SECRET } from '../config/constants.js';
+
 
 // Protect routes
 export const protect = async (req, res, next) => {

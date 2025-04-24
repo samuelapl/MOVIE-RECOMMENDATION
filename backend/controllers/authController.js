@@ -1,6 +1,6 @@
-import User from '../models/User';
-import { JWT_SECRET, JWT_EXPIRE } from '../config/constants';
-import logger from '../utils/logger';
+import User from '../models/User.js';
+import { JWT_SECRET, JWT_EXPIRE } from '../config/constants.js';
+
 import jwt from 'jsonwebtoken';
 
 // Generate JWT token
@@ -54,7 +54,7 @@ export const register = async (req, res, next) => {
 // @desc    Login user
 // @route   POST /api/auth/login
 // @access  Public
-export const login = async (req, res, next) => {
+export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -99,8 +99,7 @@ export const login = async (req, res, next) => {
       },
     });
   } catch (err) {
-    logger.error('Login error:', err);
-    next(err);
+    console.log(err)
   }
 };
 
@@ -116,7 +115,7 @@ export const getMe = async (req, res, next) => {
       data: user,
     });
   } catch (err) {
-    logger.error('Get user error:', err);
-    next(err);
+    console.log(err)
+ 
   }
 };

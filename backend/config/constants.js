@@ -1,6 +1,4 @@
-module.exports = {
-    JWT_SECRET: process.env.JWT_SECRET || 'myjwt',
-    JWT_EXPIRE: '7d',
-    MIN_PASSWORD_LENGTH: 6,
-    MIN_GENRES_SELECTION: 3,
-  };
+export const JWT_SECRET = process.env.JWT_SECRET || 'myjwt';
+export const JWT_EXPIRE = '7d';
+export const MIN_PASSWORD_LENGTH = 6;
+export const MIN_GENRES_SELECTION = 3;

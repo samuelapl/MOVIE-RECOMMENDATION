@@ -1,7 +1,7 @@
-const logger = require('../utils/logger');
+import logger from '../utils/logger';
 
 // Error handler middleware
-exports.errorHandler = (err, req, res, next) => {
+export const errorHandler = (err, req, res, next) => {
   logger.error(err.stack);
 
   // Mongoose bad ObjectId

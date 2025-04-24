@@ -1,10 +1,10 @@
-const User = require('../models/User');
-const logger = require('../utils/logger');
+import User from '../models/User';
+import logger from '../utils/logger';
 
 // @desc    Get all users
 // @route   GET /api/users
 // @access  Private/Admin
-exports.getUsers = async (req, res, next) => {
+export const getUsers = async (req, res, next) => {
   try {
     const users = await User.find().select('-password');
 
@@ -22,7 +22,7 @@ exports.getUsers = async (req, res, next) => {
 // @desc    Get single user
 // @route   GET /api/users/:id
 // @access  Private/Admin
-exports.getUser = async (req, res, next) => {
+export const getUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id).select('-password');
 
@@ -46,7 +46,7 @@ exports.getUser = async (req, res, next) => {
 // @desc    Update user
 // @route   PUT /api/users/:id
 // @access  Private
-exports.updateUser = async (req, res, next) => {
+export const updateUser = async (req, res, next) => {
   try {
     const user = await User.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -73,7 +73,7 @@ exports.updateUser = async (req, res, next) => {
 // @desc    Delete user
 // @route   DELETE /api/users/:id
 // @access  Private/Admin
-exports.deleteUser = async (req, res, next) => {
+export const deleteUser = async (req, res, next) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
 

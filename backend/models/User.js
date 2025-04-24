@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const { MIN_GENRES_SELECTION } = require('../config/constants');
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import { MIN_GENRES_SELECTION } from '../config/constants';
 
 const UserSchema = new mongoose.Schema({
   username: {
@@ -72,4 +72,4 @@ UserSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-module.exports = mongoose.model('User', UserSchema);
+export default mongoose.model('User', UserSchema);

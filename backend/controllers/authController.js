@@ -1,7 +1,7 @@
-const User = require('../models/User');
-const { JWT_SECRET, JWT_EXPIRE } = require('../config/constants');
-const logger = require('../utils/logger');
-const jwt = require('jsonwebtoken');
+import User from '../models/User';
+import { JWT_SECRET, JWT_EXPIRE } from '../config/constants';
+import logger from '../utils/logger';
+import jwt from 'jsonwebtoken';
 
 // Generate JWT token
 const generateToken = (user) => {
@@ -19,7 +19,7 @@ const generateToken = (user) => {
 // @desc    Register user
 // @route   POST /api/auth/signup
 // @access  Public
-exports.register = async (req, res, next) => {
+export const register = async (req, res, next) => {
   try {
     const { username, email, password, age, gender, favoriteGenres } = req.body;
 
@@ -54,7 +54,7 @@ exports.register = async (req, res, next) => {
 // @desc    Login user
 // @route   POST /api/auth/login
 // @access  Public
-exports.login = async (req, res, next) => {
+export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
@@ -107,7 +107,7 @@ exports.login = async (req, res, next) => {
 // @desc    Get current logged in user
 // @route   GET /api/auth/me
 // @access  Private
-exports.getMe = async (req, res, next) => {
+export const getMe = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
 

@@ -1,12 +1,12 @@
-const express = require('express');
-const router = express.Router();
-const {
+import express from 'express';
+import router from express.Router();
+import {
   getUsers,
   getUser,
   updateUser,
   deleteUser,
-} = require('../controllers/userController');
-const { protect, authorize } = require('../middlewares/auth');
+} from '../controllers/userController';
+import { protect, authorize } from '../middlewares/auth';
 
 router.use(protect);
 

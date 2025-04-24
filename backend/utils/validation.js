@@ -1,7 +1,7 @@
-const { check, validationResult } = require('express-validator');
+import { check, validationResult } from 'express-validator';
 
 // Validation for registration
-exports.validateRegister = [
+export const validateRegister = [
   check('username', 'Username is required').not().isEmpty(),
   check('email', 'Please include a valid email').isEmail(),
   check(
@@ -14,13 +14,13 @@ exports.validateRegister = [
 ];
 
 // Validation for login
-exports.validateLogin = [
+export const validateLogin = [
   check('email', 'Please include a valid email').isEmail(),
   check('password', 'Password is required').exists(),
 ];
 
 // Middleware to handle validation results
-exports.handleValidation = (req, res, next) => {
+export const handleValidation = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({

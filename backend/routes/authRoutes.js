@@ -1,11 +1,12 @@
 import express from 'express';
-import router from express.Router();
 import {
   register,
   login,
   getMe,
-} from '../controllers/authController';
-import { protect } from '../middlewares/auth';
+} from '../controllers/authController.js';
+import { protect } from '../middlewares/auth.js';
+
+const router = express.Router();
 
 router.post('/signup', register);
 router.post('/login', login);

@@ -14,11 +14,12 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     try {
-      await login({ email, password });
+      await login({ email, password });      // No need to navigate here - the login function already handles navigation
     } catch (err) {
-      console.log(err)
-      setError('Invalid email or password');
+      console.log(err);
+      setError(err.message || 'Invalid email or password');
     }
   };
 

@@ -14,20 +14,30 @@ import { FiLogOut } from "react-icons/fi";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext.jsx";
 
-const Sidebar = ({ 
-  selectedGenre, 
+const Sidebar = ({
+  selectedGenre,
   setSelectedGenre,
   activeTab,
-  setActiveTab 
+  setActiveTab,
 }) => {
   const { user, logout } = useAuth();
   const [genresExpanded, setGenresExpanded] = useState(false);
   const navigate = useNavigate();
 
   const genres = [
-    "Action", "Comedy", "Drama", "Sci-Fi", "Horror",
-    "Romance", "Thriller", "Documentary", "Animation",
-    "Fantasy", "Mystery", "Crime", "Adventure"
+    "Action",
+    "Comedy",
+    "Drama",
+    "Sci-Fi",
+    "Horror",
+    "Romance",
+    "Thriller",
+    "Documentary",
+    "Animation",
+    "Fantasy",
+    "Mystery",
+    "Crime",
+    "Adventure",
   ];
 
   const handleNavClick = (tab) => {
@@ -37,10 +47,19 @@ const Sidebar = ({
   return (
     <div className="w-full bg-gray-800 p-4 flex flex-col h-full">
       {/* Logo/Branding */}
-      <div className="flex items-center mb-8">
-        <FaHome className="text-yellow-400 text-xl mr-2" />
-        <h2 className="text-xl font-bold">Bruh Picks</h2>
-      </div>
+      <NavLink 
+  to={user ? "/" : "/user-page"} // Goes to landing page if logged in, otherwise to user page
+  onClick={() => {
+    if (!user) {
+      navigate('/user-page');
+    }
+  }}
+>
+  <div className="flex items-center mb-8">
+    <FaHome className="text-yellow-400 text-xl mr-2" />
+    <h2 className="text-xl font-bold">Bruh Picks</h2>
+  </div>
+</NavLink>
 
       {/* Navigation Links */}
       <nav className="flex-1">
@@ -48,7 +67,7 @@ const Sidebar = ({
           <li>
             <NavLink
               to="/user-page"
-              onClick={() => handleNavClick('all')}
+              onClick={() => handleNavClick("all")}
               className={({ isActive }) =>
                 `flex items-center w-full p-3 rounded-lg ${
                   isActive ? "bg-gray-700 text-yellow-400" : "hover:bg-gray-700"
@@ -59,11 +78,11 @@ const Sidebar = ({
               All Movies
             </NavLink>
           </li>
-          
+
           <li>
             <NavLink
               to="/favorites"
-              onClick={() => handleNavClick('favorites')}
+              onClick={() => handleNavClick("favorites")}
               className={({ isActive }) =>
                 `flex items-center w-full p-3 rounded-lg ${
                   isActive ? "bg-gray-700 text-yellow-400" : "hover:bg-gray-700"
@@ -74,11 +93,11 @@ const Sidebar = ({
               Favorites
             </NavLink>
           </li>
-          
+
           <li>
             <NavLink
               to="/trending"
-              onClick={() => handleNavClick('trending')}
+              onClick={() => handleNavClick("trending")}
               className={({ isActive }) =>
                 `flex items-center w-full p-3 rounded-lg ${
                   isActive ? "bg-gray-700 text-yellow-400" : "hover:bg-gray-700"
@@ -89,11 +108,11 @@ const Sidebar = ({
               Trending
             </NavLink>
           </li>
-          
+
           <li>
             <NavLink
               to="/new-releases"
-              onClick={() => handleNavClick('new')}
+              onClick={() => handleNavClick("new")}
               className={({ isActive }) =>
                 `flex items-center w-full p-3 rounded-lg ${
                   isActive ? "bg-gray-700 text-yellow-400" : "hover:bg-gray-700"
@@ -122,7 +141,9 @@ const Sidebar = ({
                 {genres.map((genre) => (
                   <li key={genre}>
                     <button
-                      onClick={() => setSelectedGenre(genre === selectedGenre ? null : genre)}
+                      onClick={() =>
+                        setSelectedGenre(genre === selectedGenre ? null : genre)
+                      }
                       className={`w-full text-left p-2 rounded ${
                         genre === selectedGenre
                           ? "text-yellow-400"

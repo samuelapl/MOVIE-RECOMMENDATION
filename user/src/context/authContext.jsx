@@ -1,81 +1,100 @@
-// src/context/AuthContext.js
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [authLoading, setAuthLoading] = useState(true); 
+  const [authLoading, setAuthLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
-  // Inside AuthProvider component
-  useEffect(() => {
-    const verifyToken = async () => {
-      const token = localStorage.getItem("token");
-      console.log("Token from localStorage:", token);
-      if (token) {
-        try {
-          setAuthLoading(true);
-          const response = await fetch("/api/auth/verify", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
 
-          if (response.ok) {
-            const data = await response.json();
-            console.log("Verified user data:", data.user); // Add this
-            setUser(data.user);
-          } else {
-            console.log("Token verification failed"); // Add this
-            localStorage.removeItem("token");
-          }
-        } catch (error) {
-          console.log("Token verification error:", error);
-          localStorage.removeItem("token");
-          console.log(error)
-        }finally {
-          setAuthLoading(false); // Set loading to false when done
-        }
-      }else {
-        setAuthLoading(false); // No token to verify
-      }
-    };
-
-    verifyToken();
+  // Persistent user data in localStorage
+  const persistUser = useCallback((userData, token) => {
+    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("token", token);
+    setUser({ ...userData, token }); // Store token in user object
   }, []);
 
-  const login = async (userData) => {
+  const clearUser = useCallback(() => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    setUser(null);
+    setError(null);
+  }, []);
+
+  // Verify token and get user data on initial load
+  const verifyToken = useCallback(async () => {
     try {
-      // Replace with your actual backend API call
+      const token = localStorage.getItem("token");
+      if (!token) {
+        clearUser();
+        return false;
+      }
+
+      const response = await fetch("http://localhost:5000/api/auth/verify", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (!response.ok) {
+        throw new Error("Token verification failed");
+      }
+
+      const data = await response.json();
+      
+      // Update user data if needed
+      if (data.user) {
+        persistUser(data.user, token);
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Token verification error:", error);
+      clearUser();
+      return false;
+    }
+  }, [clearUser, persistUser]);
+
+  // Initialize auth state on app load
+  useEffect(() => {
+    const initializeAuth = async () => {
+      await verifyToken();
+      setAuthLoading(false);
+    };
+    initializeAuth();
+  }, [verifyToken]);
+
+  const login = async (credentials) => {
+    try {
+      setAuthLoading(true);
       const response = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(userData),
+        body: JSON.stringify(credentials),
       });
 
       if (!response.ok) {
-        throw new Error("Login failed");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Login failed");
       }
 
       const data = await response.json();
-      console.log("Login response data:", data); 
-      setUser({
-        ...data.user, // user details
-        token: data.token // make sure token is included
-      });
-      localStorage.setItem("token", data.token);
+      persistUser(data.user, data.token);
       navigate("/user-page");
     } catch (error) {
       console.error("Login error:", error);
+      setError(error.message);
       throw error;
+    } finally {
+      setAuthLoading(false);
     }
   };
 
   const register = async (userData) => {
     try {
+      setAuthLoading(true);
       const response = await fetch("http://localhost:5000/api/auth/signup", {
         method: "POST",
         headers: {
@@ -85,30 +104,50 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (!response.ok) {
-        throw new Error("Registration failed");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Registration failed");
       }
 
       const data = await response.json();
-      setUser(data.user);
-      localStorage.setItem("token", data.token);
+      persistUser(data.user, data.token);
       navigate("/login");
     } catch (error) {
       console.error("Registration error:", error);
+      setError(error.message);
       throw error;
+    } finally {
+      setAuthLoading(false);
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("token");
+  const logout = useCallback(() => {
+    clearUser();
     navigate("/");
-  };
+  }, [clearUser, navigate]);
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout,authLoading }}>
+    <AuthContext.Provider 
+      value={{ 
+        user, 
+        authLoading, 
+        error,
+        login, 
+        register, 
+        logout,
+        isAuthenticated: !!user,
+        setError,
+        verifyToken // Expose verifyToken for ProtectedRoute
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};

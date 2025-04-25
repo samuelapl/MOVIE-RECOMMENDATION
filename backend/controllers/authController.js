@@ -119,3 +119,20 @@ export const getMe = async (req, res, next) => {
  
   }
 };
+
+// controllers/authController.js
+export const verifyToken = async (req, res) => {
+  try {
+    // If we get here, the token is already verified by middleware
+    res.status(200).json({ 
+      success: true,
+      user: {
+        id: req.user.id,
+        email: req.user.email,
+        // include other user fields you need
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error during verification' });
+  }
+};

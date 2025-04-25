@@ -53,6 +53,11 @@ const UserDashboard = ({
     
       <div className="p-6">
         <div className="max-w-7xl mx-auto">
+        
+         
+
+          <MovieBanner movies={featuredMovies} />
+
           <div className="mb-6">
             <p className="text-gray-400">Discover your next favorite movie</p>
           </div>
@@ -61,8 +66,6 @@ const UserDashboard = ({
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
           />
-
-          <MovieBanner movies={featuredMovies} />
 
           {loading ? (
             <p className="text-gray-400">Loading movies...</p>

@@ -1,5 +1,6 @@
 import React from "react";
 import { FaFilm, FaHeart, FaPlay } from "react-icons/fa";
+import WhatYouGetSection from "./WhatYouGetSection";
 
 const LandingPage = () => {
   return (
@@ -48,12 +49,15 @@ const LandingPage = () => {
             </button>
           </div>
 
+         
+
           {/* Scrolling Indicator */}
           <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
             <div className="animate-bounce w-6 h-6 border-4 border-white rounded-full"></div>
           </div>
         </div>
       </div>
+    
 
       {/* Gradient Overlay Bottom */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent z-0"></div>

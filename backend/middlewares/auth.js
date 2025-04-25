@@ -46,3 +46,24 @@ export const authorize = (...roles) => {
     next();
   };
 };
+
+export const verifyTokenMiddleWare = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  
+  if (!token) {
+    return res.status(401).json({ message: 'No token provided' });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ message: 'Failed to authenticate token' });
+    }
+    
+    // If token is valid, save to request for use in other routes
+    req.userId = decoded.userId;
+    req.user = decoded;
+    next();
+  });
+};
+

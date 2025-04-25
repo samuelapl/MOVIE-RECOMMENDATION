@@ -1,11 +1,16 @@
 import React from 'react'
 import Navbar from '../Layout/Navbar';
 import Footer from '../Layout/Footer';
-const Layout = ({children}) => {
+import LandingPage from '../LandingPage';
+import WhatYouGetSection from '../WhatYouGetSection';
+import WhatYouGetSteps from '../WhatYouGetSteps';
+const Layout = () => {
   return (
     <>
       <Navbar />
-      {children}
+      <LandingPage/>
+      <WhatYouGetSection/>
+      <WhatYouGetSteps/>
       <Footer />
     </>
   )

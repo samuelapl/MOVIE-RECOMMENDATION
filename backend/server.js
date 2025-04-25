@@ -12,12 +12,15 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// Use this if you don't need dynamic origin checking
+const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174'];
+
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: allowedOrigins, // Array of allowed origins
   credentials: true,
-  exposedHeaders: ['Authorization'],
+  exposedHeaders: ['Authorization']
 }));
+
 app.use(express.json());
 
 

@@ -1,17 +1,27 @@
-// src/components/ProtectedRoute.js
+import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../context/authContext.jsx';
+import { useAuth } from '../context/authContext';
 
 const ProtectedRoute = ({ children }) => {
-  const { user } = useAuth();
-  console.log("ProtectedRoute - User:", user); // Debug log
+  const { user, authLoading, verifyToken } = useAuth();
+  const [isVerifying, setIsVerifying] = useState(false);
 
-  if (!user) {
-    console.warn("User is not logged in, redirecting to login...");
-    return <Navigate to="/login" replace />;
+  useEffect(() => {
+    const checkAuth = async () => {
+      if (!user && !authLoading) {
+        setIsVerifying(true);
+        await verifyToken();
+        setIsVerifying(false);
+      }
+    };
+    checkAuth();
+  }, [user, authLoading, verifyToken]);
+
+  if (authLoading || isVerifying) {
+    return <div>Loading...</div>;
   }
 
-  return children;
+  return user ? children : <Navigate to="/login" replace />;
 };
 
 export default ProtectedRoute;

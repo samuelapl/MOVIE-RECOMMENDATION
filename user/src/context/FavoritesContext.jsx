@@ -15,17 +15,16 @@ export const FavoritesProvider = ({ children }) => {
       baseURL: 'http://localhost:5000/api',
     });
 
-    // Add request interceptor to automatically include token
     instance.interceptors.request.use(config => {
-      if (user?.token) {
-        config.headers.Authorization = `Bearer ${user.token}`;
+      const token = user?.token || localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
       }
       return config;
     });
 
     return instance;
-  }, [user?.token]);
-
+  }, [user?.token]); 
   // Normalize movie ID from different possible fields
   const normalizeId = (movieId) => {
     if (!movieId) return null;

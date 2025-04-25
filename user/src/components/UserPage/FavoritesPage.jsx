@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useFavorites } from '../../context/FavoritesContext.jsx';
 import MovieCard from './MovieCard.jsx';
-import WithSidebarLayout from '../Layout/WithSidebarLayout.jsx';
 
 const FavoritesPage = () => {
   const { favorites, loading, fetchFavorites } = useFavorites();

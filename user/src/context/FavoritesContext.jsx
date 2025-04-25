@@ -7,98 +7,137 @@ const FavoritesContext = createContext();
 export const FavoritesProvider = ({ children }) => {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { user, authLoading } = useAuth();
-  console.log("FavoritesProvider - User:", user); // Debug log
-  console.log("FavoritesProvider - AuthLoading:", authLoading); // Debug log
-  
-  // Stable axios instance
-  const axiosInstance = useMemo(() => axios.create({
-    baseURL: 'http://localhost:5000/api/',
-  }), []);
+  const { user } = useAuth();
 
-  // Stable fetchFavorites
+  // Create a stable axios instance with auth header
+  const axiosInstance = useMemo(() => {
+    const instance = axios.create({
+      baseURL: 'http://localhost:5000/api',
+    });
+
+    // Add request interceptor to automatically include token
+    instance.interceptors.request.use(config => {
+      if (user?.token) {
+        config.headers.Authorization = `Bearer ${user.token}`;
+      }
+      return config;
+    });
+
+    return instance;
+  }, [user?.token]);
+
+  // Normalize movie ID from different possible fields
+  const normalizeId = (movieId) => {
+    if (!movieId) return null;
+    if (typeof movieId === 'object') {
+      return movieId.tmdbId || movieId.id || movieId._id;
+    }
+    return movieId;
+  };
+
+  // Fetch user's favorites
   const fetchFavorites = useCallback(async () => {
     if (!user?.token) {
-      console.error('No token available');
       setLoading(false);
       return;
     }
-    
+
     try {
       setLoading(true);
-      const response = await axiosInstance.get('/favorites', {
-        headers: {
-          'Authorization': `Bearer ${user.token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      setFavorites(response.data.favorites);
+      const response = await axiosInstance.get('/favorites');
+      setFavorites(response.data.favorites || []);
     } catch (error) {
       console.error('Error fetching favorites:', error);
     } finally {
       setLoading(false);
     }
-  }, [user?.token, axiosInstance]);
+  }, [axiosInstance, user?.token]);
 
-  const addFavorite = async (movieId) => {
+  // Add a movie to favorites
+  const addFavorite = useCallback(async (movieId) => {
+    const normalizedId = normalizeId(movieId);
+    if (!normalizedId) return;
+
     try {
-      const response = await axiosInstance.post('/favorites', { movieId }, {
-        headers: {
-          'Authorization': `Bearer ${user?.token}`,
-          'Content-Type': 'application/json'
-        }
+      const response = await axiosInstance.post(`/favorites/${normalizedId}`, { 
+        movieId: normalizedId 
       });
-      setFavorites(response.data.favorites);
+      setFavorites(response.data.favorites || []);
+      return true;
     } catch (error) {
       console.error('Error adding favorite:', error);
       throw error;
     }
-  };
+  }, [axiosInstance]);
 
-  const removeFavorite = async (movieId) => {
+  // Remove a movie from favorites
+  const removeFavorite = useCallback(async (movieId) => {
+    const normalizedId = normalizeId(movieId);
+    if (!normalizedId) return;
+
     try {
-      const response = await axiosInstance.delete(`/favorites/${movieId}`, {
-        headers: {
-          'Authorization': `Bearer ${user?.token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      setFavorites(response.data.favorites);
+      const response = await axiosInstance.delete(`/favorites/${normalizedId}`);
+      setFavorites(response.data.favorites || []);
+      return true;
     } catch (error) {
       console.error('Error removing favorite:', error);
       throw error;
     }
-  };
+  }, [axiosInstance]);
 
-  const isFavorite = (movieId) => {
-    return favorites.some(movie => movie.tmdbId === movieId || movie._id === movieId);
-  };
+  // Check if a movie is favorited
+  const isFavorite = useCallback((movieId) => {
+    const normalizedId = normalizeId(movieId);
+    if (!normalizedId) return false;
+    
+    return favorites.some(fav => 
+      fav.tmdbId === normalizedId || 
+      fav._id === normalizedId ||
+      fav.id === normalizedId
+    );
+  }, [favorites]);
 
-  const toggleFavorite = async (movieId) => {
+  // Toggle favorite status
+  const toggleFavorite = useCallback(async (movieId) => {
+    const normalizedId = normalizeId(movieId);
+    if (!normalizedId) return false;
+
     try {
-      if (isFavorite(movieId)) {
-        await removeFavorite(movieId);
+      if (isFavorite(normalizedId)) {
+        await removeFavorite(normalizedId);
+        return false;
       } else {
-        await addFavorite(movieId);
+        await addFavorite(normalizedId);
+        return true;
       }
     } catch (error) {
       console.error('Error toggling favorite:', error);
       throw error;
     }
-  };
+  }, [isFavorite, addFavorite, removeFavorite]);
+
+  // Initial fetch and when user/token changes
   useEffect(() => {
-    if (authLoading) return;
-    
     if (user?.token) {
       fetchFavorites();
     } else {
       setFavorites([]);
       setLoading(false);
     }
-  }, [user?.token, authLoading, fetchFavorites]);
+  }, [user?.token, fetchFavorites]);
 
   return (
-    <FavoritesContext.Provider value={{ favorites, loading, addFavorite, removeFavorite, isFavorite, toggleFavorite, fetchFavorites }}>
+    <FavoritesContext.Provider
+      value={{
+        favorites,
+        loading,
+        addFavorite,
+        removeFavorite,
+        isFavorite,
+        toggleFavorite,
+        fetchFavorites
+      }}
+    >
       {children}
     </FavoritesContext.Provider>
   );

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { FaHeart, FaRegHeart, FaStar, FaInfoCircle, FaTimes } from 'react-icons/fa';
+import { useFavorites } from '../../context/FavoritesContext.jsx';
 
 const MovieCard = ({ movie }) => {
-  const [isFavorite, setIsFavorite] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   return (
     <>
@@ -20,10 +21,11 @@ const MovieCard = ({ movie }) => {
           />
           <div className="absolute top-2 right-2 flex flex-col space-y-2">
             <button 
-              onClick={() => setIsFavorite(!isFavorite)}
+              onClick={() => toggleFavorite(movie.id)}
               className="p-2 bg-gray-900/70 rounded-full hover:bg-gray-900"
+              aria-label={isFavorite(movie.id) ? 'Remove from favorites' : 'Add to favorites'}
             >
-              {isFavorite ? (
+              {isFavorite(movie.id) ? (
                 <FaHeart className="text-red-500" />
               ) : (
                 <FaRegHeart className="text-white" />
@@ -32,6 +34,7 @@ const MovieCard = ({ movie }) => {
             <button 
               onClick={() => setShowModal(true)}
               className="p-2 bg-gray-900/70 rounded-full hover:bg-gray-900"
+              aria-label="View movie details"
             >
               <FaInfoCircle className="text-white" />
             </button>
@@ -58,6 +61,7 @@ const MovieCard = ({ movie }) => {
               <button 
                 onClick={() => setShowModal(false)}
                 className="absolute top-4 right-4 p-2 bg-gray-900 rounded-full hover:bg-gray-700 z-10"
+                aria-label="Close modal"
               >
                 <FaTimes className="text-white" />
               </button>
@@ -122,10 +126,10 @@ const MovieCard = ({ movie }) => {
                   Watch Now
                 </button>
                 <button 
-                  onClick={() => setIsFavorite(!isFavorite)}
+                  onClick={() => toggleFavorite(movie.id)}
                   className="px-6 py-2 bg-gray-700 rounded-lg font-medium hover:bg-gray-600 transition flex items-center"
                 >
-                  {isFavorite ? (
+                  {isFavorite(movie.id) ? (
                     <>
                       <FaHeart className="text-red-500 mr-2" />
                       Remove from Favorites

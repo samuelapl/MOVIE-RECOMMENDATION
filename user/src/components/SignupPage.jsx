@@ -1,8 +1,47 @@
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
-import { FaFilm, FaUser, FaEnvelope, FaLock, FaBirthdayCake, FaVenusMars, FaChevronRight } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { FaFilm, FaUser, FaEnvelope, FaLock, FaBirthdayCake, FaVenusMars, FaChevronRight, FaTimes } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { useAuth } from '../context/authContext.jsx'; 
 
 const SignupPage = () => {
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    age: '',
+    gender: '',
+    favoriteGenres: []
+  });
+  const [error, setError] = useState('');
+  const { register } = useAuth();
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleGenreChange = (genre) => {
+    setFormData(prev => {
+      const genres = prev.favoriteGenres.includes(genre)
+        ? prev.favoriteGenres.filter(g => g !== genre)
+        : [...prev.favoriteGenres, genre];
+      return { ...prev, favoriteGenres: genres };
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await register(formData);
+    } catch (err) {
+      setError('Registration failed. Please try again.');
+      console.log(err)
+    }
+  };
+
   const genres = [
     "Action", "Comedy", "Drama", "Sci-Fi", "Horror",
     "Romance", "Thriller", "Documentary", "Animation",
@@ -22,6 +61,13 @@ const SignupPage = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900/95 via-gray-900/70 to-gray-900/95"></div>
       </div>
 
+      {/* Close Button */}
+      <button 
+        onClick={() => navigate('/')}
+        className="absolute top-4 right-4 z-20 text-gray-300 hover:text-white transition-colors"
+      >
+        <FaTimes className="text-2xl" />
+      </button>
 
       {/* Signup Card */}
       <motion.div
@@ -53,7 +99,7 @@ const SignupPage = () => {
 
           {/* Signup Form */}
           <div className="p-6 md:p-8">
-            <form className="space-y-5">
+            <form className="space-y-5" onSubmit={handleSubmit}>
               {/* Username Field */}
               <motion.div
                 initial={{ x: -10, opacity: 0 }}
@@ -70,8 +116,11 @@ const SignupPage = () => {
                   <input
                     type="text"
                     id="username"
+                    name="username"
                     className="w-full pl-10 pr-3 py-3 bg-gray-700/80 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
                     placeholder="movielover123"
+                    value={formData.username}
+                    onChange={handleChange}
                     required
                   />
                 </div>
@@ -93,8 +142,11 @@ const SignupPage = () => {
                   <input
                     type="email"
                     id="email"
+                    name="email"
                     className="w-full pl-10 pr-3 py-3 bg-gray-700/80 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
                     placeholder="your@email.com"
+                    value={formData.email}
+                    onChange={handleChange}
                     required
                   />
                 </div>
@@ -116,8 +168,11 @@ const SignupPage = () => {
                   <input
                     type="password"
                     id="password"
+                    name="password"
                     className="w-full pl-10 pr-3 py-3 bg-gray-700/80 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
                     placeholder="••••••••"
+                    value={formData.password}
+                    onChange={handleChange}
                     required
                   />
                 </div>
@@ -139,10 +194,13 @@ const SignupPage = () => {
                   <input
                     type="number"
                     id="age"
+                    name="age"
                     min="13"
                     max="120"
                     className="w-full pl-10 pr-3 py-3 bg-gray-700/80 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
                     placeholder="18"
+                    value={formData.age}
+                    onChange={handleChange}
                     required
                   />
                 </div>
@@ -163,12 +221,17 @@ const SignupPage = () => {
                   </div>
                   <select
                     id="gender"
+                    name="gender"
                     className="w-full pl-10 pr-3 py-3 bg-gray-700/80 border border-gray-600/50 rounded-lg text-white appearance-none focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
                     required
+                    value={formData.gender}
+                    onChange={handleChange}
                   >
                     <option value="">Select gender</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
+                    <option value="other">Other</option>
+                    <option value="prefer-not-to-say">Prefer not to say</option>
                   </select>
                 </div>
               </motion.div>
@@ -193,9 +256,9 @@ const SignupPage = () => {
                       <input
                         type="checkbox"
                         id={`genre-${genre}`}
-                        name="favoriteGenres"
-                        value={genre}
                         className="hidden peer"
+                        checked={formData.favoriteGenres.includes(genre)}
+                        onChange={() => handleGenreChange(genre)}
                       />
                       <label
                         htmlFor={`genre-${genre}`}
@@ -237,6 +300,7 @@ const SignupPage = () => {
                   </label>
                 </div>
               </motion.div>
+              {error && <div className="text-red-400 text-sm mt-2">{error}</div>}
 
               {/* Submit Button */}
               <motion.div

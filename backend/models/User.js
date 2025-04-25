@@ -49,6 +49,13 @@ const UserSchema = new mongoose.Schema(
         message: `Please select at least ${MIN_GENRES_SELECTION} genres`,
       },
     },
+    favorites: {
+      type: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Movie'
+      }],
+      default: []
+    },
     isAdmin: {
       type: Boolean,
       default: false,

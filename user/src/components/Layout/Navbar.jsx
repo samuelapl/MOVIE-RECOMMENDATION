@@ -1,7 +1,7 @@
 import React from 'react';
 import { FaFilm, FaSearch, FaUserCircle } from 'react-icons/fa';
 import { FiLogIn } from 'react-icons/fi';
-
+import { Link } from 'react-router-dom';
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
@@ -47,17 +47,21 @@ const Navbar = () => {
 
           {/* Right side - Auth Buttons */}
           <div className="hidden md:block">
-            <div className="ml-4 flex items-center md:ml-6 space-x-2">
-              <button className="flex items-center text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                <FiLogIn className="mr-1" />
-                Login
-              </button>
-              <button className="bg-yellow-500 hover:bg-yellow-600 text-gray-900 px-4 py-2 rounded-md text-sm font-medium flex items-center transition duration-150">
-                <FaUserCircle className="mr-1" />
-                Sign Up
-              </button>
-            </div>
-          </div>
+  <div className="ml-4 flex items-center md:ml-6 space-x-2">
+    <Link to="/login">
+      <button className="flex items-center text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+        <FiLogIn className="mr-1" />
+        Login
+      </button>
+    </Link>
+    <Link to="/signup">
+      <button className="bg-yellow-500 hover:bg-yellow-600 text-gray-900 px-4 py-2 rounded-md text-sm font-medium flex items-center transition duration-150">
+        <FaUserCircle className="mr-1" />
+        Sign Up
+      </button>
+    </Link>
+  </div>
+</div>
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center">

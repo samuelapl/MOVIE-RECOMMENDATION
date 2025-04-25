@@ -5,6 +5,7 @@ import connectDB from './config/db.js';
 import movieRoutes from './routes/movies.routes.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import favoritesRoutes from './routes/favoritesRoutes.js';
 
 dotenv.config();
 
@@ -12,7 +13,11 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true,
+  exposedHeaders: ['Authorization'],
+}));
 app.use(express.json());
 
 
@@ -27,6 +32,7 @@ app.use('/api/users', userRoutes);
 app.post('/api/admin/test', (req, res) => {
   res.json({ message: 'Admin endpoint working' });
 });
+app.use('/api/favorites', favoritesRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

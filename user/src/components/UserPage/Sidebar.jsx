@@ -1,90 +1,111 @@
-import React from 'react';
-import { 
-  FaHome, 
-  FaHeart, 
-  FaFire, 
-  FaCalendarAlt, 
-  FaFilter, 
-  FaChevronDown, 
+import React, { useState } from "react";
+import {
+  FaHome,
+  FaHeart,
+  FaFire,
+  FaCalendarAlt,
+  FaFilter,
+  FaChevronDown,
   FaChevronUp,
   FaUserCog,
-  FaHistory,
-  FaBookmark,
   FaCog,
-  FaList
-} from 'react-icons/fa';
-import { FiLogOut } from 'react-icons/fi';
-import { useState } from 'react';
+} from "react-icons/fa";
+import { FiLogOut } from "react-icons/fi";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/authContext.jsx";
 
 const Sidebar = ({ 
-  activeTab, 
-  setActiveTab, 
   selectedGenre, 
   setSelectedGenre,
-  user // Assume we're passing user data as prop
+  activeTab,
+  setActiveTab 
 }) => {
+  const { user, logout } = useAuth();
   const [genresExpanded, setGenresExpanded] = useState(false);
-  
+  const navigate = useNavigate();
+
   const genres = [
-    'Action', 'Comedy', 'Drama', 'Sci-Fi', 'Horror',
-    'Romance', 'Thriller', 'Documentary', 'Animation',
-    'Fantasy', 'Mystery', 'Crime', 'Adventure'
+    "Action", "Comedy", "Drama", "Sci-Fi", "Horror",
+    "Romance", "Thriller", "Documentary", "Animation",
+    "Fantasy", "Mystery", "Crime", "Adventure"
   ];
 
-  // Default user if none provided
-  const currentUser = user || {
-    name: 'Guest User',
-    email: 'guest@example.com',
-    avatar: 'https://via.placeholder.com/150?text=GU'
+  const handleNavClick = (tab) => {
+    setActiveTab(tab);
   };
 
   return (
-    <div className="w-64 bg-gray-800 p-4 flex flex-col">
+    <div className="w-full bg-gray-800 p-4 flex flex-col h-full">
+      {/* Logo/Branding */}
       <div className="flex items-center mb-8">
         <FaHome className="text-yellow-400 text-xl mr-2" />
         <h2 className="text-xl font-bold">Bruh Picks</h2>
       </div>
 
+      {/* Navigation Links */}
       <nav className="flex-1">
         <ul className="space-y-2">
           <li>
-            <button
-              onClick={() => setActiveTab('all')}
-              className={`flex items-center w-full p-3 rounded-lg ${activeTab === 'all' ? 'bg-gray-700 text-yellow-400' : 'hover:bg-gray-700'}`}
+            <NavLink
+              to="/user-page"
+              onClick={() => handleNavClick('all')}
+              className={({ isActive }) =>
+                `flex items-center w-full p-3 rounded-lg ${
+                  isActive ? "bg-gray-700 text-yellow-400" : "hover:bg-gray-700"
+                }`
+              }
             >
               <FaHome className="mr-3" />
               All Movies
-            </button>
+            </NavLink>
           </li>
+          
           <li>
-            <button
-              onClick={() => setActiveTab('favorites')}
-              className={`flex items-center w-full p-3 rounded-lg ${activeTab === 'favorites' ? 'bg-gray-700 text-yellow-400' : 'hover:bg-gray-700'}`}
+            <NavLink
+              to="/favorites"
+              onClick={() => handleNavClick('favorites')}
+              className={({ isActive }) =>
+                `flex items-center w-full p-3 rounded-lg ${
+                  isActive ? "bg-gray-700 text-yellow-400" : "hover:bg-gray-700"
+                }`
+              }
             >
               <FaHeart className="mr-3" />
               Favorites
-            </button>
+            </NavLink>
           </li>
+          
           <li>
-            <button
-              onClick={() => setActiveTab('trending')}
-              className={`flex items-center w-full p-3 rounded-lg ${activeTab === 'trending' ? 'bg-gray-700 text-yellow-400' : 'hover:bg-gray-700'}`}
+            <NavLink
+              to="/trending"
+              onClick={() => handleNavClick('trending')}
+              className={({ isActive }) =>
+                `flex items-center w-full p-3 rounded-lg ${
+                  isActive ? "bg-gray-700 text-yellow-400" : "hover:bg-gray-700"
+                }`
+              }
             >
               <FaFire className="mr-3" />
               Trending
-            </button>
+            </NavLink>
           </li>
+          
           <li>
-            <button
-              onClick={() => setActiveTab('new')}
-              className={`flex items-center w-full p-3 rounded-lg ${activeTab === 'new' ? 'bg-gray-700 text-yellow-400' : 'hover:bg-gray-700'}`}
+            <NavLink
+              to="/new-releases"
+              onClick={() => handleNavClick('new')}
+              className={({ isActive }) =>
+                `flex items-center w-full p-3 rounded-lg ${
+                  isActive ? "bg-gray-700 text-yellow-400" : "hover:bg-gray-700"
+                }`
+              }
             >
               <FaCalendarAlt className="mr-3" />
               New Releases
-            </button>
+            </NavLink>
           </li>
-   
-    
+
+          {/* Genres Dropdown */}
           <li>
             <button
               onClick={() => setGenresExpanded(!genresExpanded)}
@@ -98,11 +119,15 @@ const Sidebar = ({
             </button>
             {genresExpanded && (
               <ul className="ml-8 mt-2 space-y-1">
-                {genres.map(genre => (
+                {genres.map((genre) => (
                   <li key={genre}>
                     <button
                       onClick={() => setSelectedGenre(genre === selectedGenre ? null : genre)}
-                      className={`w-full text-left p-2 rounded ${genre === selectedGenre ? 'text-yellow-400' : 'hover:text-gray-300'}`}
+                      className={`w-full text-left p-2 rounded ${
+                        genre === selectedGenre
+                          ? "text-yellow-400"
+                          : "hover:text-gray-300"
+                      }`}
                     >
                       {genre}
                     </button>
@@ -111,34 +136,51 @@ const Sidebar = ({
               </ul>
             )}
           </li>
-       
         </ul>
       </nav>
 
       {/* Profile Section */}
       <div className="mt-auto pt-4 border-t border-gray-700">
-        <div className="flex items-center p-3 mb-4 rounded-lg hover:bg-gray-700 cursor-pointer"
-          onClick={() => setActiveTab('profile')}>
-          <img 
-            src={currentUser.avatar} 
-            alt={currentUser.name}
+        <NavLink
+          to="/profile"
+          className={({ isActive }) =>
+            `flex items-center p-3 mb-4 rounded-lg ${
+              isActive ? "bg-gray-700" : "hover:bg-gray-700"
+            } cursor-pointer`
+          }
+        >
+          <img
+            src={user?.avatar || "https://via.placeholder.com/150?text=GU"}
+            alt={user?.name || "Guest"}
             className="w-10 h-10 rounded-full mr-3 object-cover"
           />
           <div>
-            <p className="font-medium">{currentUser.name}</p>
-            <p className="text-xs text-gray-400">{currentUser.email}</p>
+            <p className="font-medium">{user?.username || "Guest User"}</p>
+            <p className="text-xs text-gray-400">
+              {user?.email || "guest@example.com"}
+            </p>
           </div>
-        </div>
+        </NavLink>
 
-        <button
-          onClick={() => setActiveTab('settings')}
-          className={`flex items-center w-full p-3 rounded-lg ${activeTab === 'settings' ? 'bg-gray-700 text-yellow-400' : 'hover:bg-gray-700'}`}
+        <NavLink
+          to="/settings"
+          className={({ isActive }) =>
+            `flex items-center w-full p-3 rounded-lg ${
+              isActive ? "bg-gray-700 text-yellow-400" : "hover:bg-gray-700"
+            }`
+          }
         >
           <FaCog className="mr-3" />
           Settings
-        </button>
+        </NavLink>
 
-        <button className="flex items-center w-full p-3 rounded-lg hover:bg-gray-700 mt-2">
+        <button
+          onClick={() => {
+            logout();
+            navigate("/");
+          }}
+          className="flex items-center w-full p-3 rounded-lg hover:bg-gray-700 mt-2"
+        >
           <FiLogOut className="mr-3" />
           Logout
         </button>

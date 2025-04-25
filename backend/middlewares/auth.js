@@ -3,20 +3,17 @@ import  User from '../models/User.js';
 import  { JWT_SECRET } from '../config/constants.js';
 
 
-// Protect routes
 export const protect = async (req, res, next) => {
   let token;
 
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
-  ) {
-    token = req.headers.authorization.split(' ')[1];
-  } else if (req.cookies.token) {
+  const authHeader = req.headers?.authorization;
+
+  if (authHeader && authHeader.startsWith('Bearer')) {
+    token = authHeader.split(' ')[1];
+  } else if (req.cookies?.token) {
     token = req.cookies.token;
   }
 
-  // Make sure token exists
   if (!token) {
     return res.status(401).json({
       success: false,
@@ -25,13 +22,11 @@ export const protect = async (req, res, next) => {
   }
 
   try {
-    // Verify token
     const decoded = jwt.verify(token, JWT_SECRET);
 
     req.user = await User.findById(decoded.id).select('-password');
     next();
   } catch (err) {
-    logger.error('JWT verification error:', err);
     return res.status(401).json({
       success: false,
       error: 'Not authorized to access this route',

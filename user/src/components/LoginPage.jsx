@@ -1,8 +1,27 @@
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
-import { FaFilm, FaLock, FaEnvelope, FaArrowRight } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { FaFilm, FaLock, FaEnvelope, FaArrowRight ,FaTimes} from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { useAuth } from '../context/authContext.jsx';
 
 const LoginPage = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await login({ email, password });
+    } catch (err) {
+      console.log(err)
+      setError('Invalid email or password');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4 relative overflow-hidden">
       {/* Background Image with Gradient Overlay */}
@@ -15,7 +34,12 @@ const LoginPage = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900/95 via-gray-900/70 to-gray-900/95"></div>
       </div>
-
+      <button 
+  onClick={() => navigate('/')}
+  className="absolute top-4 right-4 z-20 text-gray-300 hover:text-white transition-colors"
+>
+  <FaTimes className="text-2xl" />
+</button>
       {/* Login Card */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -46,7 +70,7 @@ const LoginPage = () => {
 
           {/* Login Form */}
           <div className="p-8">
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit}>
               {/* Email Field */}
               <motion.div
                 initial={{ x: -10, opacity: 0 }}
@@ -65,6 +89,8 @@ const LoginPage = () => {
                     id="email"
                     className="w-full pl-10 pr-3 py-3 bg-gray-700/80 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
                     placeholder="your@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </div>
@@ -88,9 +114,12 @@ const LoginPage = () => {
                     id="password"
                     className="w-full pl-10 pr-3 py-3 bg-gray-700/80 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
                     placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     required
                   />
                 </div>
+                {error && <div className="text-red-400 text-sm mt-2">{error}</div>}
                 <div className="flex justify-end mt-2">
                   <Link 
                     to="/forgot-password" 

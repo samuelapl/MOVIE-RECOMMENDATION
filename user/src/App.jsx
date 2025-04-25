@@ -10,6 +10,8 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import { FavoritesProvider } from "./context/FavoritesContext";
 import { AuthProvider } from "./context/authContext.jsx";
 import WithSidebarLayout from "./components/Layout/WithSidebarLayout.jsx";
+import Trending from "./components/UserPage/Tranding.jsx";
+import NewReleases from  "./components/UserPage/NewReleases.jsx";
 
 // App.js
 const App = () => {
@@ -39,6 +41,26 @@ const App = () => {
                 <ProtectedRoute>
                   <WithSidebarLayout>
                     <FavoritesPage />
+                  </WithSidebarLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/trending"
+              element={
+                <ProtectedRoute>
+                  <WithSidebarLayout>
+                    <Trending />
+                  </WithSidebarLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/new-releases"
+              element={
+                <ProtectedRoute>
+                  <WithSidebarLayout>
+                    <NewReleases />
                   </WithSidebarLayout>
                 </ProtectedRoute>
               }

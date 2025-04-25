@@ -1,13 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   FaHome,
   FaHeart,
   FaFire,
   FaCalendarAlt,
-  FaFilter,
-  FaChevronDown,
-  FaChevronUp,
-  FaUserCog,
   FaCog,
 } from "react-icons/fa";
 import { FiLogOut } from "react-icons/fi";
@@ -15,51 +11,45 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext.jsx";
 
 const Sidebar = ({
-  selectedGenre,
-  setSelectedGenre,
   activeTab,
   setActiveTab,
+  onNavItemClick
 }) => {
   const { user, logout } = useAuth();
-  const [genresExpanded, setGenresExpanded] = useState(false);
   const navigate = useNavigate();
-
-  const genres = [
-    "Action",
-    "Comedy",
-    "Drama",
-    "Sci-Fi",
-    "Horror",
-    "Romance",
-    "Thriller",
-    "Documentary",
-    "Animation",
-    "Fantasy",
-    "Mystery",
-    "Crime",
-    "Adventure",
-  ];
 
   const handleNavClick = (tab) => {
     setActiveTab(tab);
+    if (onNavItemClick) onNavItemClick(); // Close sidebar on mobile
+  };
+
+  // Get first letter of username or 'G' for Guest
+  const getInitial = () => {
+    if (user?.username) {
+      return user.username.charAt(0).toUpperCase();
+    }
+    return 'G';
   };
 
   return (
     <div className="w-full bg-gray-800 p-4 flex flex-col h-full">
-      {/* Logo/Branding */}
-      <NavLink 
-  to={user ? "/" : "/user-page"} // Goes to landing page if logged in, otherwise to user page
-  onClick={() => {
-    if (!user) {
-      navigate('/user-page');
-    }
-  }}
->
-  <div className="flex items-center mb-8">
-    <FaHome className="text-yellow-400 text-xl mr-2" />
-    <h2 className="text-xl font-bold">Bruh Picks</h2>
-  </div>
-</NavLink>
+      {/* Logo/Branding with mobile menu button space */}
+      <div className="flex justify-between items-center mb-8">
+        <NavLink 
+          to={user ? "/" : "/user-page"}
+          onClick={() => {
+            if (!user) {
+              navigate('/user-page');
+            }
+          }}
+          className="flex items-center"
+        >
+          <FaHome className="text-yellow-400 text-xl mr-2" />
+          <h2 className="text-xl font-bold">Bruh Picks</h2>
+        </NavLink>
+        {/* This empty div maintains space for mobile close button */}
+        <div className="w-8 my-14 md:hidden"></div>
+      </div>
 
       {/* Navigation Links */}
       <nav className="flex-1">
@@ -123,40 +113,6 @@ const Sidebar = ({
               New Releases
             </NavLink>
           </li>
-
-          {/* Genres Dropdown */}
-          <li>
-            <button
-              onClick={() => setGenresExpanded(!genresExpanded)}
-              className="flex items-center justify-between w-full p-3 rounded-lg hover:bg-gray-700"
-            >
-              <div className="flex items-center">
-                <FaFilter className="mr-3" />
-                Genres
-              </div>
-              {genresExpanded ? <FaChevronUp /> : <FaChevronDown />}
-            </button>
-            {genresExpanded && (
-              <ul className="ml-8 mt-2 space-y-1">
-                {genres.map((genre) => (
-                  <li key={genre}>
-                    <button
-                      onClick={() =>
-                        setSelectedGenre(genre === selectedGenre ? null : genre)
-                      }
-                      className={`w-full text-left p-2 rounded ${
-                        genre === selectedGenre
-                          ? "text-yellow-400"
-                          : "hover:text-gray-300"
-                      }`}
-                    >
-                      {genre}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </li>
         </ul>
       </nav>
 
@@ -170,11 +126,17 @@ const Sidebar = ({
             } cursor-pointer`
           }
         >
-          <img
-            src={user?.avatar || "https://via.placeholder.com/150?text=GU"}
-            alt={user?.name || "Guest"}
-            className="w-10 h-10 rounded-full mr-3 object-cover"
-          />
+          {user?.avatar ? (
+            <img
+              src={user.avatar}
+              alt={user.username}
+              className="w-10 h-10 rounded-full mr-3 object-cover"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-full mr-3 bg-gray-600 flex items-center justify-center text-white font-bold">
+              {getInitial()}
+            </div>
+          )}
           <div>
             <p className="font-medium">{user?.username || "Guest User"}</p>
             <p className="text-xs text-gray-400">

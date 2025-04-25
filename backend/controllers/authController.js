@@ -129,6 +129,7 @@ export const verifyToken = async (req, res) => {
       user: {
         id: req.user.id,
         email: req.user.email,
+        username: user.username,
         // include other user fields you need
       }
     });

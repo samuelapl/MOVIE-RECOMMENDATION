@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import MovieCard from '../components/MovieCard';
 import { toast } from 'react-toastify';
-
+const REACT_APP_API_URL="https://movie-recommendation-backend-4780.onrender.com";
 const Movies = () => {
   const [movies, setMovies] = useState([]);
   const [savedMovies, setSavedMovies] = useState([]);
@@ -22,7 +22,7 @@ const Movies = () => {
               import.meta.env.VITE_TMDB_API_KEY
             }&language=en-US&page=${page}`
           ),
-          axios.get('http://localhost:5000/api/movies')
+          axios.get(`${REACT_APP_API_URL}/api/movies`)
         ]);
   
         // 2. Fetch detailed info for each popular movie
@@ -57,7 +57,7 @@ const Movies = () => {
   // Add movie to database
   const handleAddMovie = async (movie) => {
     try {
-      await axios.post('http://localhost:5000/api/movies', movie);
+      await axios.post(`${REACT_APP_API_URL}/api/movies`, movie);
       setSavedMovies(prev => [...prev, movie]);
       toast.success(`${movie.title} added successfully!`);
     } catch (err) {
@@ -69,7 +69,7 @@ const Movies = () => {
   // Delete movie from database
   const handleDeleteMovie = async (movieId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/movies/${movieId}`);
+      await axios.delete(`${REACT_APP_API_URL}/api/movies/${movieId}`);
       setSavedMovies(prev => prev.filter(m => m.id !== movieId));
       toast.success('Movie removed successfully!');
     } catch (err) {

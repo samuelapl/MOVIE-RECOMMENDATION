@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import MovieCard from "../components/MovieCard"; // Make sure to import your MovieCard component
-
+const REACT_APP_API_URL="https://movie-recommendation-backend-4780.onrender.com";
 const SavedMovies = () => {
   const [loading, setLoading] = useState(true);
   const [savedMovies, setSavedMovies] = useState([]);
@@ -12,7 +12,7 @@ const SavedMovies = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:5000/api/movies');
+        const response = await axios.get(`${REACT_APP_API_URL}/api/movies`);
         setSavedMovies(response.data);
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -27,7 +27,7 @@ const SavedMovies = () => {
 
   const handleAddMovie = async (movie) => {
     try {
-      await axios.post('http://localhost:5000/api/movies', movie);
+      await axios.post(`${REACT_APP_API_URL}/api/movies`, movie);
       setSavedMovies(prev => [...prev, movie]);
       toast.success(`${movie.title} added successfully!`);
     } catch (err) {
@@ -38,7 +38,7 @@ const SavedMovies = () => {
 
   const handleDeleteMovie = async (movieId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/movies/${movieId}`);
+      await axios.delete(`${REACT_APP_API_URL}/api/movies/${movieId}`);
       setSavedMovies(prev => prev.filter(m => m.id !== movieId));
       toast.success('Movie removed successfully!');
     } catch (err) {

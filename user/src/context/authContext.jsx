@@ -1,10 +1,8 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
-// Configuration - should be in environment variables in production
-const API_BASE_URL = "https://movie-recommendation-backend-4780.onrender.com";
-const ADMIN_FRONTEND_URL = "https://movie-recommendation-admin.onrender.com";
-const USER_FRONTEND_URL = window.location.origin; // Current user frontend URL
+const REACT_APP_API_URL = "https://movie-recommendation-backend-4780.onrender.com";
+const REACT_APP_ADMIN_URL = "https://movie-recommendation-admin.onrender.com";
 
 const AuthContext = createContext();
 
@@ -14,14 +12,13 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // Save user data to localStorage and state
+  // Persistent user data in localStorage
   const persistUser = useCallback((userData, token) => {
     localStorage.setItem("user", JSON.stringify(userData));
     localStorage.setItem("token", token);
     setUser({ ...userData, token });
   }, []);
 
-  // Clear user data from localStorage and state
   const clearUser = useCallback(() => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
@@ -29,7 +26,7 @@ export const AuthProvider = ({ children }) => {
     setError(null);
   }, []);
 
-  // Verify the JWT token with backend
+  // Verify token and get user data on initial load
   const verifyToken = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
@@ -38,7 +35,7 @@ export const AuthProvider = ({ children }) => {
         return false;
       }
 
-      const response = await fetch(`${API_BASE_URL}/api/auth/verify`, {
+      const response = await fetch(`${REACT_APP_API_URL}/api/auth/verify`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -51,9 +48,9 @@ export const AuthProvider = ({ children }) => {
       if (data.user) {
         persistUser(data.user, token);
         
-        // If user is admin but on user frontend, redirect to admin
-        if (data.user.isAdmin && window.location.href.includes(USER_FRONTEND_URL)) {
-          window.location.href = ADMIN_FRONTEND_URL;
+        // If admin is logged in but on user site, redirect to admin
+        if (data.user.isAdmin && !window.location.href.includes(REACT_APP_ADMIN_URL)) {
+          window.location.href = `${REACT_APP_ADMIN_URL}/admin-dashboard?token=${token}`;
           return false;
         }
       }
@@ -64,30 +61,21 @@ export const AuthProvider = ({ children }) => {
       clearUser();
       return false;
     }
-  }, [clearUser, persistUser, USER_FRONTEND_URL]);
+  }, [clearUser, persistUser]);
 
-  // Initialize authentication state
+  // Initialize auth state on app load
   useEffect(() => {
     const initializeAuth = async () => {
-      const isAuthenticated = await verifyToken();
-      
-      // Handle case where admin might be logged in but on user frontend
-      if (isAuthenticated && user?.isAdmin && window.location.href.includes(USER_FRONTEND_URL)) {
-        window.location.href = ADMIN_FRONTEND_URL;
-        return;
-      }
-      
+      await verifyToken();
       setAuthLoading(false);
     };
-    
     initializeAuth();
-  }, [verifyToken, user]);
+  }, [verifyToken]);
 
-  // Handle user login
   const login = async (credentials) => {
     try {
       setAuthLoading(true);
-      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+      const response = await fetch(`${REACT_APP_API_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -102,15 +90,14 @@ export const AuthProvider = ({ children }) => {
 
       const data = await response.json();
       persistUser(data.user, data.token);
-
-      // Immediately redirect admin users to admin frontend
-      if (data.user.isAdmin) {
-        window.location.href = ADMIN_FRONTEND_URL;
-        return; // Stop further execution
-      }
       
-      // Regular users continue to user dashboard
-      navigate("/user-page");
+      // Redirect admin to admin URL, regular users to user-page
+      if (data.user.isAdmin) {
+        // Use window.location.href for full page reload to different domain
+        window.location.href = `${REACT_APP_ADMIN_URL}`;
+      } else {
+        navigate("/user-page");
+      }
     } catch (error) {
       console.error("Login error:", error);
       setError(error.message);
@@ -120,11 +107,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Handle user registration
   const register = async (userData) => {
     try {
       setAuthLoading(true);
-      const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
+      const response = await fetch(`${REACT_APP_API_URL}/api/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -140,7 +126,7 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json();
       persistUser(data.user, data.token);
       
-      // New registrations go to user dashboard (assuming they're not admins)
+      // New registrations are assumed to be regular users
       navigate("/user-page");
     } catch (error) {
       console.error("Registration error:", error);
@@ -151,15 +137,14 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Handle user logout
   const logout = useCallback(() => {
     clearUser();
     
-    // If logging out from admin frontend, redirect to user frontend login
-    if (window.location.href.includes(ADMIN_FRONTEND_URL)) {
-      window.location.href = `${USER_FRONTEND_URL}/login`;
+    // If logging out from admin site, redirect to user login page
+    if (window.location.href.includes(REACT_APP_ADMIN_URL)) {
+      window.location.href = `${window.location.origin.replace('admin', 'user')}/login`;
     } else {
-      navigate("/login");
+      navigate("/");
     }
   }, [clearUser, navigate]);
 

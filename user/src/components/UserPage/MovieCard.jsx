@@ -86,8 +86,8 @@ const MovieCard = ({ movie }) => {
             <div className="relative h-64 sm:h-80 w-full">
               <img 
                 src={
-                  movie.backdrop_path
-                    ? `https://image.tmdb.org/t/p/original${movie.backdrop_path}`
+                  movie.poster_path
+                    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
                     : 'https://via.placeholder.com/1920x1080?text=No+Backdrop'
                 }
                 alt={movie.title}

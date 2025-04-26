@@ -127,7 +127,7 @@ export const AuthProvider = ({ children }) => {
       persistUser(data.user, data.token);
       
       // New registrations are assumed to be regular users
-      navigate("/user-page");
+      navigate("/login");
     } catch (error) {
       console.error("Registration error:", error);
       setError(error.message);

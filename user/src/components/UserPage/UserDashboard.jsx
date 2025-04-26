@@ -4,7 +4,7 @@ import MovieBanner from "./MovieBanner";
 import SearchBar from "./SearchBar";
 import MovieCard from "./MovieCard";
 import GenreFilter from "./GenreFilter";
-
+const REACT_APP_API_URL="https://movie-recommendation-backend-4780.onrender.com";
 const UserDashboard = ({
   selectedGenre,
   activeTab,
@@ -25,7 +25,7 @@ const UserDashboard = ({
     const fetchMovies = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:5000/api/movies");
+        const response = await axios.get(`${REACT_APP_API_URL}/api/movies`);
         setMovies(response.data);
         setFeaturedMovies(response.data.slice(0, 5));
       } catch (error) {

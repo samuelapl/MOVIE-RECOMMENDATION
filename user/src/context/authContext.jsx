@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-
+const REACT_APP_API_URL="https://movie-recommendation-backend-4780.onrender.com";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
         return false;
       }
 
-      const response = await fetch("http://localhost:5000/api/auth/verify", {
+      const response = await fetch(`${REACT_APP_API_URL}/api/auth/verify`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       setAuthLoading(true);
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch(`${REACT_APP_API_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -95,7 +95,7 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       setAuthLoading(true);
-      const response = await fetch("http://localhost:5000/api/auth/signup", {
+      const response = await fetch(`${REACT_APP_API_URL}/api/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

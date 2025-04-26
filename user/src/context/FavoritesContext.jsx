@@ -3,7 +3,7 @@ import { useAuth } from './authContext.jsx';
 import axios from 'axios';
 
 const FavoritesContext = createContext();
-
+const REACT_APP_API_URL="https://movie-recommendation-backend-4780.onrender.com";
 export const FavoritesProvider = ({ children }) => {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,7 +12,7 @@ export const FavoritesProvider = ({ children }) => {
   // Create a stable axios instance with auth header
   const axiosInstance = useMemo(() => {
     const instance = axios.create({
-      baseURL: 'http://localhost:5000/api',
+      baseURL: `${REACT_APP_API_URL}/api`,
     });
 
     instance.interceptors.request.use(config => {

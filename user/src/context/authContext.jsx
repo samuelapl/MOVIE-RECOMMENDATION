@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
         
         // If admin is logged in but on user site, redirect to admin
         if (data.user.isAdmin && !window.location.href.includes(REACT_APP_ADMIN_URL)) {
-          window.location.href = `${REACT_APP_ADMIN_URL}/admin-dashboard?token=${token}`;
+          window.location.replace = `${REACT_APP_ADMIN_URL}/admin-dashboard?token=${token}`;
           return false;
         }
       }

@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
         
         // If admin is logged in but on user site, redirect to admin
         if (data.user.isAdmin && !window.location.href.includes(REACT_APP_ADMIN_URL)) {
-          window.location.replace = REACT_APP_ADMIN_URL;
+          window.location.href = REACT_APP_ADMIN_URL;
           return false;
         }
       }
@@ -84,8 +84,16 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Login failed");
+        const errorText = await response.text();
+        let errorMessage = "Login failed";
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.message || errorMessage;
+        } catch (e) {
+          errorMessage = errorText || errorMessage;
+          console.log(e)
+        }
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
@@ -93,7 +101,6 @@ export const AuthProvider = ({ children }) => {
       
       // Redirect admin to admin URL, regular users to user-page
       if (data.user.isAdmin) {
-        // Use window.location.href for full page reload to different domain
         window.location.href = REACT_APP_ADMIN_URL;
       } else {
         navigate("/user-page");
@@ -118,12 +125,22 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify(userData),
       });
 
+      const responseText = await response.text();
+      
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Registration failed");
+        let errorMessage = "Registration failed";
+        try {
+          const errorData = JSON.parse(responseText);
+          errorMessage = errorData.message || errorMessage;
+        } catch (e) {
+          errorMessage = responseText || errorMessage;
+          console.log(e)
+        }
+        throw new Error(errorMessage);
       }
 
-      const data = await response.json();
+      // Only try to parse if response is OK
+      const data = JSON.parse(responseText);
       persistUser(data.user, data.token);
       
       // New registrations are assumed to be regular users

@@ -13,7 +13,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Use this if you don't need dynamic origin checking
-const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174',"https://movie-recommendation-oc6z.onrender.com"];
+const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174',"https://movie-recommendation-oc6z.onrender.com","https://movie-recommendation-admin.onrender.com"];
 
 app.use(cors({
   origin: allowedOrigins, // Array of allowed origins

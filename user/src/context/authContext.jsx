@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
         
         // If admin is logged in but on user site, redirect to admin
         if (data.user.isAdmin && !window.location.href.includes(REACT_APP_ADMIN_URL)) {
-          window.location.replace = `${REACT_APP_ADMIN_URL}/admin-dashboard?token=${token}`;
+          window.location.replace = REACT_APP_ADMIN_URL;
           return false;
         }
       }
@@ -94,7 +94,7 @@ export const AuthProvider = ({ children }) => {
       // Redirect admin to admin URL, regular users to user-page
       if (data.user.isAdmin) {
         // Use window.location.href for full page reload to different domain
-        window.location.href = `${REACT_APP_ADMIN_URL}`;
+        window.location.href = REACT_APP_ADMIN_URL;
       } else {
         navigate("/user-page");
       }

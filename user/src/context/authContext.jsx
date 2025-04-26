@@ -94,7 +94,7 @@ export const AuthProvider = ({ children }) => {
       // Redirect admin to admin URL, regular users to user-page
       if (data.user.isAdmin) {
         // Use window.location.href for full page reload to different domain
-        window.location.href = `${REACT_APP_ADMIN_URL}/admin-dashboard?token=${data.token}`;
+        window.location.href = `${REACT_APP_ADMIN_URL}`;
       } else {
         navigate("/user-page");
       }

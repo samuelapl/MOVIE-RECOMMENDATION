@@ -103,10 +103,8 @@ const WhatYouGetSection = () => {
         className="text-center mt-20"
       >
         <button className="px-10 py-4 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-gray-900 font-bold rounded-full text-lg transition-all shadow-lg hover:shadow-yellow-400/40 transform hover:-translate-y-1">
-          Unlock These Features — Sign Up Free
-          <span className="block text-sm font-normal mt-1 text-yellow-900">
-            No payment required
-          </span>
+          Unlock These Features — Sign Up
+        
         </button>
       </motion.div>
     </div>

@@ -46,7 +46,7 @@ export const register = async (req, res, next) => {
       },
     });
   } catch (err) {
-    logger.error('Registration error:', err);
+    console.error('Registration error:', err);
     next(err);
   }
 };
@@ -130,7 +130,7 @@ export const verifyToken = async (req, res) => {
       user: {
         id: req.user.id,
         email: req.user.email,
-        username: user.username,
+        username: req.user.username,
         // include other user fields you need
       }
     });

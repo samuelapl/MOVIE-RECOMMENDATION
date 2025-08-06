@@ -1,11 +1,10 @@
-// routes/favoritesRoutes.js
 import express from 'express';
 import { protect } from '../middlewares/auth.js';
 import {
   addToFavorites,
   removeFromFavorites,
   getFavorites
-} from '../controllers/favoritesController.js';
+} from '../controllers/user.favoritesController.js';
 
 const router = express.Router();
 

@@ -12,6 +12,7 @@ const MovieSchema = new mongoose.Schema({
     id: Number,
     name: String
   }],
+  
   addedBy: { // Track who added the movie
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'

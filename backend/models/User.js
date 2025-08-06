@@ -49,6 +49,7 @@ const UserSchema = new mongoose.Schema(
         message: `Please select at least ${MIN_GENRES_SELECTION} genres`,
       },
     },
+    
     favorites: {
       type: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -71,12 +72,11 @@ const UserSchema = new mongoose.Schema(
   }
 );
 
-// Virtual role property (e.g., 'admin' or 'user')
 UserSchema.virtual('role').get(function () {
   return this.isAdmin ? 'admin' : 'user';
 });
 
-// Hash password before saving
+
 UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
 
@@ -89,7 +89,6 @@ UserSchema.pre('save', async function (next) {
   }
 });
 
-// Compare password method
 UserSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };

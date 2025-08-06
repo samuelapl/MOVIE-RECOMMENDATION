@@ -1,9 +1,5 @@
 import User from '../models/User.js';
 
-
-// @desc    Get all users
-// @route   GET /api/users
-// @access  Private/Admin
 export const getUsers = async (req, res, next) => {
   try {
     const users = await User.find().select('-password');
@@ -19,9 +15,6 @@ export const getUsers = async (req, res, next) => {
   }
 };
 
-// @desc    Get single user
-// @route   GET /api/users/:id
-// @access  Private/Admin
 export const getUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id).select('-password');
@@ -42,9 +35,7 @@ export const getUser = async (req, res, next) => {
   }
 };
 
-// @desc    Update user
-// @route   PUT /api/users/:id
-// @access  Private
+
 export const updateUser = async (req, res, next) => {
   try {
     const user = await User.findByIdAndUpdate(req.params.id, req.body, {
@@ -68,9 +59,7 @@ export const updateUser = async (req, res, next) => {
   }
 };
 
-// @desc    Delete user
-// @route   DELETE /api/users/:id
-// @access  Private/Admin
+
 export const deleteUser = async (req, res, next) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);

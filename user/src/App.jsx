@@ -12,8 +12,6 @@ import { AuthProvider } from "./context/authContext.jsx";
 import WithSidebarLayout from "./components/Layout/WithSidebarLayout.jsx";
 import Trending from "./components/UserPage/Tranding.jsx";
 import NewReleases from  "./components/UserPage/NewReleases.jsx";
-
-// App.js
 const App = () => {
   return (
     <Router>

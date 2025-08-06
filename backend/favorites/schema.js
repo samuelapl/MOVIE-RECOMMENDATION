@@ -9,7 +9,7 @@ const typeDefs = gql`
 
   type Movie {
     _id: ID! # MongoDB ID
-    id: ID! # TMDB ID
+    id: Int # TMDB ID
     title: String!
     poster_path: String
     overview: String

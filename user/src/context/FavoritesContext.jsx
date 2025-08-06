@@ -9,7 +9,6 @@ export const FavoritesProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-  // Create a stable axios instance with auth header
   const axiosInstance = useMemo(() => {
     const instance = axios.create({
       baseURL: `${REACT_APP_API_URL}/api`,
@@ -25,7 +24,7 @@ export const FavoritesProvider = ({ children }) => {
 
     return instance;
   }, [user?.token]); 
-  // Normalize movie ID from different possible fields
+
   const normalizeId = (movieId) => {
     if (!movieId) return null;
     if (typeof movieId === 'object') {
@@ -34,7 +33,6 @@ export const FavoritesProvider = ({ children }) => {
     return movieId;
   };
 
-  // Fetch user's favorites
   const fetchFavorites = useCallback(async () => {
     if (!user?.token) {
       setLoading(false);
@@ -52,7 +50,6 @@ export const FavoritesProvider = ({ children }) => {
     }
   }, [axiosInstance, user?.token]);
 
-  // Add a movie to favorites
   const addFavorite = useCallback(async (movieId) => {
     const normalizedId = normalizeId(movieId);
     if (!normalizedId) return;
@@ -69,7 +66,6 @@ export const FavoritesProvider = ({ children }) => {
     }
   }, [axiosInstance]);
 
-  // Remove a movie from favorites
   const removeFavorite = useCallback(async (movieId) => {
     const normalizedId = normalizeId(movieId);
     if (!normalizedId) return;
@@ -84,7 +80,7 @@ export const FavoritesProvider = ({ children }) => {
     }
   }, [axiosInstance]);
 
-  // Check if a movie is favorited
+
   const isFavorite = useCallback((movieId) => {
     const normalizedId = normalizeId(movieId);
     if (!normalizedId) return false;
@@ -96,7 +92,6 @@ export const FavoritesProvider = ({ children }) => {
     );
   }, [favorites]);
 
-  // Toggle favorite status
   const toggleFavorite = useCallback(async (movieId) => {
     const normalizedId = normalizeId(movieId);
     if (!normalizedId) return false;
@@ -115,7 +110,6 @@ export const FavoritesProvider = ({ children }) => {
     }
   }, [isFavorite, addFavorite, removeFavorite]);
 
-  // Initial fetch and when user/token changes
   useEffect(() => {
     if (user?.token) {
       fetchFavorites();

@@ -7,6 +7,15 @@ import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 // import favoritesRoutes from './routes/favoritesRoutes.js';
 
+
+//GraphQL Setup
+
+import { ApolloServer } from 'apollo-server-express';
+import typeDefs from './favorites/schema.js';
+import resolvers from './favorites/resolvers.js';
+import { protect } from './middlewares/auth.js';
+
+
 dotenv.config();
 
 const app = express();
@@ -37,6 +46,26 @@ app.post('/api/admin/test', (req, res) => {
 });
 
 // app.use('/api/favorites', favoritesRoutes);
+
+
+//Apollo Server Setup
+const server=new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: ({ req }) => {
+    return { user: req.user };
+  }
+})
+
+async function startServer() {
+  await server.start();
+  // We apply the 'protect' middleware to secure the GraphQL endpoint
+  app.use('/graphql', protect);
+  server.applyMiddleware({ app, path: '/graphql' });
+}
+
+startServer();
+
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

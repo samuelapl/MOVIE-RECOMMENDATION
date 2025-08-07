@@ -1,10 +1,8 @@
-// MovieBanner.jsx (Updated)
 import React, { useState, useEffect } from 'react';
-import { FaHeart, FaRegHeart, FaPlay, FaImage } from 'react-icons/fa'; // FaImage is new
+import { FaHeart, FaRegHeart, FaPlay, FaImage, FaStar, FaCalendarAlt, FaClock } from 'react-icons/fa';
 import { gql, useQuery, useMutation } from '@apollo/client';
 import { useToast } from '../../toast/ToastContext.jsx';
 
-// GraphQL Queries and Mutations (remain unchanged)
 const GET_FAVORITES_QUERY = gql`
   query GetUserFavorites {
     getFavorites {
@@ -35,9 +33,10 @@ const REMOVE_FAVORITE_MUTATION = gql`
   }
 `;
 
-const MovieBanner = ({ movies=[] }) => {
+const MovieBanner = ({ movies = [] }) => {
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
   const [showTrailer, setShowTrailer] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const { addToast } = useToast();
 
   const { data } = useQuery(GET_FAVORITES_QUERY);
@@ -71,12 +70,12 @@ const MovieBanner = ({ movies=[] }) => {
   const isFavorite = favoriteMovieIds.includes(movieId);
 
   useEffect(() => {
-    // Only auto-advance if the trailer is not playing
     if (movies.length <= 1 || showTrailer) return;
 
     const interval = setInterval(() => {
       setCurrentBannerIndex(prev => (prev + 1) % movies.length);
-    }, 5000);
+      setImageLoaded(false);
+    }, 6000);
 
     return () => clearInterval(interval);
   }, [movies.length, showTrailer]);
@@ -101,12 +100,9 @@ const MovieBanner = ({ movies=[] }) => {
     }
   };
 
-  const handleViewPoster = () => {
-    setShowTrailer(false);
-  };
-
   return (
-    <div className="relative h-[34rem] rounded-xl overflow-hidden mb-8">
+    <div className="relative h-[500px] sm:h-[600px] lg:h-[700px] rounded-3xl overflow-hidden group">
+      {/* Background Image/Video */}
       {showTrailer && currentMovie.trailer_url ? (
         <div className="absolute inset-0">
           <iframe
@@ -117,67 +113,101 @@ const MovieBanner = ({ movies=[] }) => {
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
-          ></iframe>
+            className="rounded-3xl"
+          />
         </div>
       ) : (
-        <div
-          className="absolute inset-0 transition-opacity duration-1000"
-          style={{
-            backgroundImage: `url(https://image.tmdb.org/t/p/original${currentMovie.backdrop_path || currentMovie.poster_path})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            opacity: 0.8
-          }}
-        />
+        <>
+          {/* Loading Skeleton */}
+          <div className={`absolute inset-0 bg-gradient-to-r from-slate-800 to-slate-700 animate-pulse transition-opacity duration-500 ${imageLoaded ? 'opacity-0' : 'opacity-100'}`} />
+          
+          {/* Background Image */}
+           <div className="absolute inset-0 overflow-hidden">
+            <img
+              src={`https://image.tmdb.org/t/p/original${currentMovie.backdrop_path || currentMovie.poster_path}`}
+              alt={currentMovie.title}
+              className={`w-full h-full object-cover transition-all duration-1000 ${imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'}`}
+              onLoad={() => setImageLoaded(true)}
+              loading="lazy"
+            />
+          </div>
+          
+          {/* Gradient Overlays */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/20" />
+        </>
       )}
       
-      <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/70 to-transparent" />
-      
-      <div className="relative h-full flex items-end p-8">
-        <div className="max-w-2xl">
-          <h2 className="text-4xl font-bold mb-2">{currentMovie.title}</h2>
-          <div className="flex items-center space-x-4 mb-4">
-            <span className="text-yellow-400">{currentMovie.vote_average?.toFixed(1) || 'N/A'}/10</span>
-            <span>{currentMovie.release_date || 'N/A'}</span>
-            <span>{currentMovie.runtime || 'N/A'} min</span>
+      {/* Content */}
+      <div className="relative h-full flex items-end p-8 lg:p-12">
+        <div className="max-w-3xl space-y-6">
+          {/* Movie Title */}
+          <div className="space-y-3">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight drop-shadow-2xl">
+              {currentMovie.title}
+            </h1>
+            
+            {/* Movie Stats */}
+            <div className="flex flex-wrap items-center gap-4 text-white/90">
+              <div className="flex items-center space-x-2 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+                <FaStar className="text-amber-400" />
+                <span className="font-semibold">{currentMovie.vote_average?.toFixed(1) || 'N/A'}</span>
+              </div>
+              <div className="flex items-center space-x-2 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+                <FaCalendarAlt className="text-blue-400" />
+                <span>{currentMovie.release_date?.split('-')[0] || 'N/A'}</span>
+              </div>
+              {currentMovie.runtime && (
+                <div className="flex items-center space-x-2 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+                  <FaClock className="text-green-400" />
+                  <span>{currentMovie.runtime} min</span>
+                </div>
+              )}
+            </div>
           </div>
-          <p className="text-gray-300 line-clamp-3">{currentMovie.overview || 'N/A'}</p>
-          <div className="mt-4 flex space-x-3">
+
+          {/* Overview */}
+          <p className="text-lg text-white/90 leading-relaxed max-w-2xl line-clamp-3 drop-shadow-lg">
+            {currentMovie.overview || 'No overview available.'}
+          </p>
+          
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4">
             {showTrailer ? (
               <button
-                onClick={handleViewPoster}
-                className="px-6 py-2 bg-white text-gray-900 rounded-lg font-medium hover:bg-gray-200 transition flex items-center gap-2"
+                onClick={() => setShowTrailer(false)}
+                className="px-8 py-4 bg-white/20 backdrop-blur-md border border-white/30 text-white rounded-2xl font-semibold hover:bg-white/30 hover:scale-105 transition-all duration-300 flex items-center justify-center space-x-3 shadow-2xl"
               >
-                <FaImage />
-                View Poster
+                <FaImage className="text-xl" />
+                <span>View Poster</span>
               </button>
             ) : (
               <button
                 onClick={handlePlayTrailer}
-                className="px-6 py-2 bg-yellow-500 text-gray-900 rounded-lg font-medium hover:bg-yellow-600 transition flex items-center gap-2"
+                className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-2xl font-semibold hover:scale-105 transition-all duration-300 flex items-center justify-center space-x-3 shadow-2xl shadow-purple-500/25"
               >
-                <FaPlay />
-                Watch Trailer
+                <FaPlay className="text-xl" />
+                <span>Watch Trailer</span>
               </button>
             )}
+            
             <button
               onClick={handleFavoriteClick}
-              className={`flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition ${
+              className={`px-8 py-4 backdrop-blur-md border rounded-2xl font-semibold hover:scale-105 transition-all duration-300 flex items-center justify-center space-x-3 shadow-2xl ${
                 isFavorite
-                  ? 'bg-red-500 hover:bg-red-600 text-white'
-                  : 'bg-gray-700 hover:bg-gray-600 text-white'
+                  ? 'bg-red-500/20 border-red-500/50 text-red-400 hover:bg-red-500/30'
+                  : 'bg-white/10 border-white/20 text-white hover:bg-white/20'
               }`}
             >
               {isFavorite ? (
                 <>
-                  <FaHeart />
-                  Remove Favorite
+                  <FaHeart className="text-xl" />
+                  <span>Remove Favorite</span>
                 </>
               ) : (
                 <>
-                  <FaRegHeart />
-                  Add to Favorites
+                  <FaRegHeart className="text-xl" />
+                  <span>Add to Favorites</span>
                 </>
               )}
             </button>
@@ -185,18 +215,26 @@ const MovieBanner = ({ movies=[] }) => {
         </div>
       </div>
       
-      <div className="absolute bottom-4 right-8 flex space-x-2">
-        {movies.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => {
-              setCurrentBannerIndex(index);
-              setShowTrailer(false);
-            }}
-            className={`w-3 h-3 rounded-full ${index === currentBannerIndex ? 'bg-yellow-400' : 'bg-gray-500'}`}
-          />
-        ))}
-      </div>
+      {/* Navigation Dots */}
+      {movies.length > 1 && (
+        <div className="absolute bottom-6 right-8 flex space-x-3">
+          {movies.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                setCurrentBannerIndex(index);
+                setShowTrailer(false);
+                setImageLoaded(false);
+              }}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                index === currentBannerIndex 
+                  ? 'bg-white scale-125 shadow-lg' 
+                  : 'bg-white/50 hover:bg-white/75'
+              }`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

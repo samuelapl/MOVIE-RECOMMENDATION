@@ -20,7 +20,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 
-const allowedOrigins = ['http://localhost:5174', 'http://localhost:5175'];
+const allowedOrigins = ['http://localhost:5174', 'http://localhost:5175','https://roha-picks.onrender.com'];
 
 const corsOptions = {
   origin: allowedOrigins,

@@ -25,7 +25,6 @@ export const deleteMovie = async (req, res) => {
   }
 };
 
-// Get all saved movies
 export const getMovies = async (req, res) => {
   try {
     const movies = await Movie.find();

@@ -7,7 +7,6 @@ import Layout from "./components/Layout/Layout";
 import UserDashboard from "./components/UserPage/UserDashboard";
 import FavoritesPage from "./components/UserPage/FavoritesPage";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
-import { FavoritesProvider } from "./context/FavoritesContext";
 import { AuthProvider } from "./context/authContext.jsx";
 import WithSidebarLayout from "./components/Layout/WithSidebarLayout.jsx";
 import Trending from "./components/UserPage/Tranding.jsx";
@@ -16,7 +15,6 @@ const App = () => {
   return (
     <Router>
       <AuthProvider>
-        <FavoritesProvider>
           <Routes>
             {/* Public routes */}
             <Route path="/" element={<Layout></Layout>} />
@@ -64,7 +62,6 @@ const App = () => {
               }
             />
           </Routes>
-        </FavoritesProvider>
       </AuthProvider>
     </Router>
   );

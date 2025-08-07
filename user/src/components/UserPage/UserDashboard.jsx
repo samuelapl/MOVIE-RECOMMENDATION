@@ -4,7 +4,7 @@ import MovieBanner from "./MovieBanner";
 import SearchBar from "./SearchBar";
 import MovieCard from "./MovieCard";
 import GenreFilter from "./GenreFilter";
-const REACT_APP_API_URL="https://movie-recommendation-backend-4780.onrender.com";
+const REACT_APP_API_URL = import.meta.env.VITE_BASE_URI;
 const UserDashboard = ({
   selectedGenre,
   activeTab,

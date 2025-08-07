@@ -4,6 +4,7 @@ import './index.css'
 import App from './App.jsx'
 import {ApolloClient,InMemoryCache,ApolloProvider,createHttpLink} from '@apollo/client'
 import { setContext } from '@apollo/client/link/context';
+import { ToastProvider } from './toast/ToastContext.jsx';
 
 const httpLink = createHttpLink({
   uri: 'http://localhost:5000/graphql',
@@ -29,7 +30,11 @@ const client = new ApolloClient({
 createRoot(document.getElementById('root')).render(
   <StrictMode>
      <ApolloProvider client={client}>
-    <App />
+      <ToastProvider>
+
+   <App />
+      </ToastProvider>
+ 
    </ApolloProvider>
   </StrictMode>,
 )

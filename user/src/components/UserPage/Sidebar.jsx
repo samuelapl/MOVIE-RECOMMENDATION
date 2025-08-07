@@ -5,6 +5,7 @@ import {
   FaFire,
   FaCalendarAlt,
   FaCog,
+  FaStar,
 } from "react-icons/fa";
 import { FiLogOut } from "react-icons/fi";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -111,6 +112,21 @@ const Sidebar = ({
             >
               <FaCalendarAlt className="mr-3" />
               New Releases
+            </NavLink>
+          </li>
+
+          <li>
+            <NavLink
+              to="/for-you"
+              onClick={() => handleNavClick("forYou")}
+              className={({ isActive }) =>
+                `flex items-center w-full p-3 rounded-lg ${
+                  isActive ? "bg-gray-700 text-yellow-400" : "hover:bg-gray-700"
+                }`
+              }
+            >
+              <FaStar className="mr-3" />
+              For You
             </NavLink>
           </li>
         </ul>

@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import MovieCard from "../components/MovieCard"; // Make sure to import your MovieCard component
-const REACT_APP_API_URL="https://movie-recommendation-backend-4780.onrender.com";
+
+const REACT_APP_API_URL = import.meta.env.VITE_BASE_URI; 
+
 const SavedMovies = () => {
   const [loading, setLoading] = useState(true);
   const [savedMovies, setSavedMovies] = useState([]);

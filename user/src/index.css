@@ -31,3 +31,34 @@ body {
   background-color: #ffb43a;
   border-radius: 10px;
 }
+
+
+.heart-glow {
+  text-shadow: 0 0 5px #f87171, 0 0 10px #f87171, 0 0 15px #f87171;
+  transform: scale(1.1);
+}
+
+.favorite-blur {
+  position: relative;
+  overflow: hidden;
+}
+
+.favorite-blur::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 0, 0, 0.2); /* Semi-transparent red overlay */
+  backdrop-filter: blur(5px); /* Apply blur effect */
+  z-index: 1; /* Ensure it's above the image but below other elements */
+  pointer-events: none; /* Allow clicks to pass through */
+  transition: backdrop-filter 0.3s ease, background-color 0.3s ease; /* Smooth transition */
+}
+
+/* Ensure content that should be visible is above the blur */
+.favorite-blur > div:not(.absolute.inset-0.bg-gradient-to-t) {
+  position: relative;
+  z-index: 2;
+}

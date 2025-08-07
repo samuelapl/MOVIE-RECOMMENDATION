@@ -1,3 +1,4 @@
+// UserDashboard.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import MovieBanner from "./MovieBanner";
@@ -5,6 +6,7 @@ import SearchBar from "./SearchBar";
 import MovieCard from "./MovieCard";
 import GenreFilter from "./GenreFilter";
 const REACT_APP_API_URL = import.meta.env.VITE_BASE_URI;
+
 const UserDashboard = ({
   selectedGenre,
   activeTab,
@@ -16,7 +18,7 @@ const UserDashboard = ({
   const [searchQuery, setSearchQuery] = useState("");
  
   const genres = [
-    "Action", "Comedy", "Drama", "Sci-Fi", "Horror",
+    "Action", "Comedy", "Drama", "Science Fiction", "Horror",
     "Romance", "Thriller", "Documentary", "Animation",
     "Fantasy", "Mystery", "Crime", "Adventure"
   ];
@@ -54,7 +56,8 @@ const UserDashboard = ({
       <main className="max-w-7xl mx-auto px-4 sm:px-6 pb-16 pt-4">
         {/* Hero Banner */}
         <section className="mb-8 rounded-xl sm:rounded-2xl overflow-hidden shadow-xl">
-          <MovieBanner movies={featuredMovies} />
+          {/* Conditionally render MovieBanner only when featuredMovies is not empty */}
+          {featuredMovies.length > 0 && <MovieBanner movies={featuredMovies} />}
         </section>
 
         {/* Search and Filter Section */}

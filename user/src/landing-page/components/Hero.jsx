@@ -1,8 +1,7 @@
 import React from "react";
 import { FaFilm, FaHeart, FaPlay } from "react-icons/fa";
-import WhatYouGetSection from "./WhatYouGetSection";
 
-const LandingPage = () => {
+const Hero = () => {
   return (
     <div className="relative w-full h-screen overflow-hidden">
       {/* Background Image with Overlay */}
@@ -65,4 +64,4 @@ const LandingPage = () => {
   );
 };
 
-export default LandingPage;
+export default Hero;

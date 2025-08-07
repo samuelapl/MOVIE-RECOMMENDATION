@@ -43,7 +43,7 @@ const SignupPage = () => {
   };
 
   const genres = [
-    "Action", "Comedy", "Drama", "Sci-Fi", "Horror",
+    "Action", "Comedy", "Drama", "Science Fiction", "Horror",
     "Romance", "Thriller", "Documentary", "Animation",
     "Fantasy", "Mystery", "Crime", "Adventure", "Musical"
   ];

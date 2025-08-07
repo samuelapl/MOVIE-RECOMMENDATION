@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { FaFilm, FaLock, FaEnvelope, FaArrowRight ,FaTimes} from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from 'react';
-import { useAuth } from '../context/authContext.jsx';
+import { useAuth } from '../context/authContext';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');

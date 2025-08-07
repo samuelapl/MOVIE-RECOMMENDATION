@@ -1,9 +1,8 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import LoginPage from "./components/LoginPage";
-import SignupPage from "./components/SignupPage";
-import Layout from "./components/Layout/Layout";
+import LoginPage from "./auth-page/LoginPage.jsx";
+import SignupPage from "./auth-page/SignupPage.jsx";
 import UserDashboard from "./components/UserPage/UserDashboard";
 import FavoritesPage from "./components/UserPage/FavoritesPage";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
@@ -11,13 +10,15 @@ import { AuthProvider } from "./context/authContext.jsx";
 import WithSidebarLayout from "./components/Layout/WithSidebarLayout.jsx";
 import Trending from "./components/UserPage/Tranding.jsx";
 import NewReleases from  "./components/UserPage/NewReleases.jsx";
+import FoyFou from "./components/UserPage/ForYouPage.jsx"
+import LandingPage from "./landing-page/LandingPage.jsx"
 const App = () => {
   return (
     <Router>
       <AuthProvider>
           <Routes>
             {/* Public routes */}
-            <Route path="/" element={<Layout></Layout>} />
+            <Route path="/" element={<LandingPage/>} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
 
@@ -57,6 +58,17 @@ const App = () => {
                 <ProtectedRoute>
                   <WithSidebarLayout>
                     <NewReleases />
+                  </WithSidebarLayout>
+                </ProtectedRoute>
+              }
+            />
+
+             <Route
+              path="/for-you"
+              element={
+                <ProtectedRoute>
+                  <WithSidebarLayout>
+                    <FoyFou />
                   </WithSidebarLayout>
                 </ProtectedRoute>
               }

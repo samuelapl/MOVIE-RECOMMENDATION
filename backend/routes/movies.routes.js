@@ -3,11 +3,15 @@ import {
   addMovie,
   deleteMovie,
   getMovies,
-  getMovie
+  getMovie,
+  getForYouMovies
 } from '../controllers/movies.controller.js';
-// import { verifyAdmin } from '../middlewares/auth.js';
 
+import { authMiddleware } from '../middlewares/auth.js';
 const router = express.Router();
+
+
+router.get('/for-you', authMiddleware,getForYouMovies);
 
 // Admin-only routes
 router.post('/',  addMovie);

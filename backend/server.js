@@ -5,15 +5,13 @@ import connectDB from './config/db.js';
 import movieRoutes from './routes/movies.routes.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
-// import favoritesRoutes from './routes/favoritesRoutes.js';
-
 
 //GraphQL Setup
 
 import { ApolloServer } from 'apollo-server-express';
 import typeDefs from './favorites/schema.js';
 import resolvers from './favorites/resolvers.js';
-import { protect } from './middlewares/auth.js';
+import { authMiddleware } from './middlewares/auth.js';
 
 
 dotenv.config();
@@ -21,11 +19,20 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors({
-  origin: "*", 
+
+const allowedOrigins = ['http://localhost:5174', 'http://localhost:5175'];
+
+const corsOptions = {
+  origin: allowedOrigins,
   credentials: true,
-  exposedHeaders: ['Authorization']
-}));
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+
+app.use(cors(corsOptions));
+
+app.options('*', cors(corsOptions));
 
 app.use(express.json());
 
@@ -57,7 +64,7 @@ const server=new ApolloServer({
 async function startServer() {
   await server.start();
   // We apply the 'protect' middleware to secure the GraphQL endpoint
-  app.use('/graphql', protect);
+  app.use('/graphql', authMiddleware);
   server.applyMiddleware({ app, path: '/graphql' });
 }
 

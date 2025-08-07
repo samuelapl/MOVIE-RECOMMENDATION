@@ -1,8 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
-const REACT_APP_API_URL = "https://movie-recommendation-backend-4780.onrender.com";
-const REACT_APP_ADMIN_URL = "https://movie-recommendation-admin.onrender.com";
+const REACT_APP_API_URL = import.meta.env.VITE_BASE_URI;
 
 const AuthContext = createContext();
 

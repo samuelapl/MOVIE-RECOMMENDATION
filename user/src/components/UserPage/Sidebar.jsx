@@ -117,17 +117,16 @@ const Sidebar = ({
 
           <li>
             <NavLink
-              to="/for-you"
-              onClick={() => handleNavClick("forYou")}
-              className={({ isActive }) =>
-                `flex items-center w-full p-3 rounded-lg ${
-                  isActive ? "bg-gray-700 text-yellow-400" : "hover:bg-gray-700"
-                }`
-              }
-            >
-              <FaStar className="mr-3" />
-              For You
-            </NavLink>
+    to="/for-you"
+    className={({ isActive }) =>
+      `flex items-center p-3 rounded-lg ${
+        isActive ? 'bg-gray-700 text-yellow-400' : 'hover:bg-gray-700'
+      }`
+    }
+  >
+    <FaStar className="mr-3" />
+    For You
+  </NavLink>
           </li>
         </ul>
       </nav>

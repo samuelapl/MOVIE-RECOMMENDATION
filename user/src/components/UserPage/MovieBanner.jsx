@@ -1,10 +1,10 @@
-// MovieBanner.jsx
+// MovieBanner.jsx (Updated)
 import React, { useState, useEffect } from 'react';
-import { FaHeart, FaRegHeart, FaPlay } from 'react-icons/fa';
+import { FaHeart, FaRegHeart, FaPlay, FaImage } from 'react-icons/fa'; // FaImage is new
 import { gql, useQuery, useMutation } from '@apollo/client';
 import { useToast } from '../../toast/ToastContext.jsx';
 
-// GraphQL Queries and Mutations
+// GraphQL Queries and Mutations (remain unchanged)
 const GET_FAVORITES_QUERY = gql`
   query GetUserFavorites {
     getFavorites {
@@ -43,8 +43,7 @@ const MovieBanner = ({ movies=[] }) => {
   const { data } = useQuery(GET_FAVORITES_QUERY);
   const [addToFavorites] = useMutation(ADD_FAVORITE_MUTATION, {
     refetchQueries: [GET_FAVORITES_QUERY],
-    onCompleted: (data) => {
-      // You may need to adjust this to match your actual mutation response
+    onCompleted: () => {
       addToast(`${currentMovie?.title} added to favorites!`, 'success');
     },
     onError: (error) => {
@@ -61,11 +60,10 @@ const MovieBanner = ({ movies=[] }) => {
     }
   });
 
-
   if (movies.length === 0) {
     return null;
   }
-
+  
   const currentMovie = movies[currentBannerIndex];
   const movieId = Number(currentMovie.id);
 
@@ -73,6 +71,7 @@ const MovieBanner = ({ movies=[] }) => {
   const isFavorite = favoriteMovieIds.includes(movieId);
 
   useEffect(() => {
+    // Only auto-advance if the trailer is not playing
     if (movies.length <= 1 || showTrailer) return;
 
     const interval = setInterval(() => {
@@ -95,12 +94,15 @@ const MovieBanner = ({ movies=[] }) => {
   };
 
   const handlePlayTrailer = () => {
-    // Check if a trailer URL exists before trying to play it
     if (currentMovie?.trailer_url) {
       setShowTrailer(true);
     } else {
       addToast('No trailer available for this movie.', 'info');
     }
+  };
+
+  const handleViewPoster = () => {
+    setShowTrailer(false);
   };
 
   return (
@@ -142,13 +144,23 @@ const MovieBanner = ({ movies=[] }) => {
           </div>
           <p className="text-gray-300 line-clamp-3">{currentMovie.overview || 'N/A'}</p>
           <div className="mt-4 flex space-x-3">
-            <button
-              onClick={handlePlayTrailer}
-              className="px-6 py-2 bg-yellow-500 text-gray-900 rounded-lg font-medium hover:bg-yellow-600 transition flex items-center gap-2"
-            >
-              <FaPlay />
-              Watch Trailer
-            </button>
+            {showTrailer ? (
+              <button
+                onClick={handleViewPoster}
+                className="px-6 py-2 bg-white text-gray-900 rounded-lg font-medium hover:bg-gray-200 transition flex items-center gap-2"
+              >
+                <FaImage />
+                View Poster
+              </button>
+            ) : (
+              <button
+                onClick={handlePlayTrailer}
+                className="px-6 py-2 bg-yellow-500 text-gray-900 rounded-lg font-medium hover:bg-yellow-600 transition flex items-center gap-2"
+              >
+                <FaPlay />
+                Watch Trailer
+              </button>
+            )}
             <button
               onClick={handleFavoriteClick}
               className={`flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition ${

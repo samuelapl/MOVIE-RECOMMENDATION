@@ -20,7 +20,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 
-const allowedOrigins = ['http://localhost:5174', 'http://localhost:5175','https://roha-picks.onrender.com'];
+const allowedOrigins = ['http://localhost:5174', 'http://localhost:5175','https://roha-picks.onrender.com','http://localhost:3001'];
 
 const corsOptions = {
   origin: allowedOrigins,
@@ -37,10 +37,10 @@ app.options('*', cors(corsOptions));
 app.use(express.json());
 
 
-// Database
+
 connectDB();
 
-// Routes
+
 app.use('/api/movies', movieRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
@@ -49,10 +49,7 @@ app.post('/api/admin/test', (req, res) => {
   res.json({ message: 'Admin endpoint working' });
 });
 
-// app.use('/api/favorites', favoritesRoutes);
 
-
-//Apollo Server Setup
 const server=new ApolloServer({
   typeDefs,
   resolvers,

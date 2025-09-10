@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  backend:
+    restart: unless-stopped
+    build: ./backend
+    container_name: backend
+    ports:
+      - "5000:5000"
+    environment:
+     MONGO_URI: "mongodb://samuelapl:samuelapl@ac-bfvq6mg-shard-00-00.bvjngek.mongodb.net:27017,ac-bfvq6mg-shard-00-01.bvjngek.mongodb.net:27017,ac-bfvq6mg-shard-00-02.bvjngek.mongodb.net:27017/?ssl=true&replicaSet=atlas-iiayg4-shard-0&authSource=admin&retryWrites=true&w=majority&appName=Cluster0"
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+
+  admin:
+    restart: unless-stopped
+    build: ./Admin
+    container_name: admin_frontend
+    ports:
+      - "3000:80"  # Map host port 3000 to container port 80
+
+  user:
+    restart: unless-stopped
+    build: ./user
+    container_name: user_frontend
+    ports:
+      - "3001:80"  # Map host port 3001 to container port 80

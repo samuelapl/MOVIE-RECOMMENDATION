@@ -7,7 +7,7 @@ import { setContext } from '@apollo/client/link/context';
 import { ToastProvider } from './toast/ToastContext.jsx';
 
 const httpLink = createHttpLink({
-  uri: 'https://movie-recommendation-backend-4780.onrender.com/graphql',
+  uri: 'https://roha-picks-back.onrender.com/graphql',
 });
 
 const authLink = setContext((_, { headers }) => {
